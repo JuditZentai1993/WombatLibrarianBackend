@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi
 {
@@ -28,10 +30,7 @@ namespace WombatLibrarianApi
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WombatLibrarianApi", Version = "v1" });
-            });
+            services.AddDbContext<BookContext>(opt => opt.UseInMemoryDatabase("BookList"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +39,6 @@ namespace WombatLibrarianApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WombatLibrarianApi v1"));
             }
 
             app.UseHttpsRedirection();
