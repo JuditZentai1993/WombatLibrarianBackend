@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace WombatLibrarianApi.Models
@@ -19,5 +20,7 @@ namespace WombatLibrarianApi.Models
         public string MaturityRating { get; set; }
         public int Published { get; set; }
         public string Publisher { get; set; }
+    
+        public override string ToString() => JsonSerializer.Serialize<Book>(this);
     }
 }

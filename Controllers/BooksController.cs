@@ -21,24 +21,10 @@ namespace WombatLibrarianApi.Controllers
         }
 
         // GET: api/Books
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBookItems()
+        [HttpGet("{searchTerm}")]
+        public async Task<ActionResult<string>> GetBookItems(string searchTerm)
         {
-            return await _context.BookItems.ToListAsync();
-        }
-
-        // GET: api/Books/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
-        {
-            var book = await _context.BookItems.FindAsync(id);
-
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return book;
+            return await _context.GetSearchResults(searchTerm);
         }
 
         // PUT: api/Books/5
