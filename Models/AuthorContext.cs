@@ -16,8 +16,7 @@ namespace WombatLibrarianApi.Models
         public async Task<string> GetAuthorBooks(string author, int startIndex, 
             int maxResultsPerRequest)
         {
-            string url = "https://www.googleapis.com/books/v1/volumes?q=inauthor:" + author
-                            + "&startIndex=" + startIndex.ToString() + "&maxResults=" + maxResultsPerRequest.ToString();
+            string url = $"https://www.googleapis.com/books/v1/volumes?q=inauthor:{author}";
 
             using (var client = new HttpClient())
             {
