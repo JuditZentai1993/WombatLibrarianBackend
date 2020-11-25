@@ -39,6 +39,7 @@ namespace WombatLibrarianApi
             });
             services.AddDbContext<BookContext>(opt => opt.UseInMemoryDatabase("BookList"));
             services.AddDbContext<AuthorContext>(opt => opt.UseInMemoryDatabase("AuthorBookList"));
+            services.AddDbContext<BookShelfContext>(opt => opt.UseInMemoryDatabase("BookShelfList"));
             services.AddControllers();
         }
 
