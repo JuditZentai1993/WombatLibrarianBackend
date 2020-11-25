@@ -24,14 +24,18 @@ namespace WombatLibrarianApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBookShelfItems()
         {
-            return await _context.BookShelfItems.ToListAsync();
+            return await _context.BookShelfItems
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .ToListAsync();
         }
 
         // GET: api/BookShelf/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<Book>> GetBook(string id)
         {
-            var book = await _context.BookShelfItems.FindAsync(id);
+            var book = await _context.BookShelfItems
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .FirstOrDefaultAsync(bookShelfItem => bookShelfItem.Id == id);
 
             if (book == null)
             {
@@ -77,6 +81,8 @@ namespace WombatLibrarianApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
+            Console.WriteLine(book.ToString());
+            _context.Authors.AddRange(book.Authors);
             _context.BookShelfItems.Add(book);
             await _context.SaveChangesAsync();
 
