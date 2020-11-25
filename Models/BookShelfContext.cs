@@ -10,6 +10,7 @@ namespace WombatLibrarianApi.Models
     public class BookShelfContext : DbContext
     {
         public DbSet<Book> BookShelfItems { get; set; }
+        public DbSet<Author> Authors { get; set; }
 
         public BookShelfContext(DbContextOptions<BookShelfContext> options) : base(options)
         {
