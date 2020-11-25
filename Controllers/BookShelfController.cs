@@ -44,7 +44,7 @@ namespace WombatLibrarianApi.Controllers
         // PUT: api/BookShelf/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(string id, Book book)
         {
             if (id != book.Id)
             {
@@ -80,7 +80,10 @@ namespace WombatLibrarianApi.Controllers
             _context.BookShelfItems.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction(
+                nameof(GetBook),
+                new { id = book.Id }, 
+                book);
         }
 
         // DELETE: api/BookShelf/5
@@ -99,7 +102,7 @@ namespace WombatLibrarianApi.Controllers
             return NoContent();
         }
 
-        private bool BookExists(int id)
+        private bool BookExists(string id)
         {
             return _context.BookShelfItems.Any(e => e.Id == id);
         }
