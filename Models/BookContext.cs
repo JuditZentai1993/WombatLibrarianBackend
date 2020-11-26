@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace WombatLibrarianApi.Models
 {
@@ -16,8 +17,9 @@ namespace WombatLibrarianApi.Models
         {
         }
 
-        public async Task<string> GetSearchResults(string searchTerm)
+        public async Task GetSearchResults(string searchTerm)
         {
+            clearBookItems();
             string url = "https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=40";
 
             using (var client = new HttpClient())
@@ -29,6 +31,7 @@ namespace WombatLibrarianApi.Models
                 string textResult = await response.Content.ReadAsStringAsync();
 
                 JObject bookSearch = JObject.Parse(textResult);
+
                 IList<JToken> results = bookSearch["items"].Children().ToList();
                 foreach (JToken result in results)
                 {
@@ -39,10 +42,14 @@ namespace WombatLibrarianApi.Models
                     searchResult.Id = id;
                     BookItems.Add(searchResult);
                 }
-                return textResult;
+                SaveChanges();
             }
         }
 
-
+        private void clearBookItems()
+        {    
+            BookItems.RemoveRange(BookItems);
+            SaveChanges();
+        }
     }
 }
