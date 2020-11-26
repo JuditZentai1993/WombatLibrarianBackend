@@ -26,6 +26,7 @@ namespace WombatLibrarianApi.Controllers
         {
             return await _context.BookShelfItems
                 .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
                 .ToListAsync();
         }
 
@@ -35,6 +36,7 @@ namespace WombatLibrarianApi.Controllers
         {
             var book = await _context.BookShelfItems
                 .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
                 .FirstOrDefaultAsync(bookShelfItem => bookShelfItem.Id == id);
 
             if (book == null)
@@ -83,6 +85,7 @@ namespace WombatLibrarianApi.Controllers
         {
             Console.WriteLine(book.ToString());
             _context.Authors.AddRange(book.Authors);
+            _context.Categories.AddRange(book.Categories);
             _context.BookShelfItems.Add(book);
             await _context.SaveChangesAsync();
 
