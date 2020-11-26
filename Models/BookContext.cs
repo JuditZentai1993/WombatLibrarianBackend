@@ -58,6 +58,7 @@ namespace WombatLibrarianApi.Models
             Book book = new Book();
             book.Id = jToken["id"]?.ToString();
             book.Title = volumeInfo["title"]?.ToString();
+            book.Subtitle = volumeInfo["subtitle"]?.ToString();
             book.Thumbnail = volumeInfo["imageLinks"]["thumbnail"]?.ToString();
             if (volumeInfo["authors"] != null)
             {
