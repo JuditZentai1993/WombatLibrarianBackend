@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,10 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Books
         [HttpGet("{searchTerm}")]
-        public async Task<ActionResult<string>> GetBookItems(string searchTerm)
+        public async Task<ActionResult<IEnumerable<Book>>> GetBookItems(string searchTerm)
         {
-            return await _context.GetSearchResults(searchTerm);
+            await _context.GetSearchResults(searchTerm);
+            return await _context.BookItems.ToListAsync();
         }
     }
 }
