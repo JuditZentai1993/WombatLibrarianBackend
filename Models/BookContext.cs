@@ -6,21 +6,24 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace WombatLibrarianApi.Models
 {
     public class BookContext : DbContext
     {
         public DbSet<Book> BookItems { get; set; }
+        private readonly IConfiguration Configuration;
 
-        public BookContext(DbContextOptions<BookContext> options) : base(options)
+        public BookContext(DbContextOptions<BookContext> options, IConfiguration configuration) : base(options)
         {
+            Configuration = configuration;
         }
 
         public async Task GetSearchResults(string searchTerm)
         {
             clearBookItems();
-            string url = "https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=40";
+            string url = $"{Configuration["GBooksURL"]}?q={searchTerm}&maxResults=10";
 
             using (var client = new HttpClient())
             {
