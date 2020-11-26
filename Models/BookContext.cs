@@ -37,7 +37,7 @@ namespace WombatLibrarianApi.Models
                 {
                     BookItems.Add(parseJsonToken(token));
                 }
-                SaveChanges();
+                await SaveChangesAsync();
             }
         }
 
@@ -55,6 +55,11 @@ namespace WombatLibrarianApi.Models
             Book book = new Book();
             book.Id = jToken["id"]?.ToString();
             book.Title = volumeInfo["title"]?.ToString();
+            if (volumeInfo["authors"] != null)
+            {
+                book.Authors = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["authors"]).ToString())
+                    .Select(a => new Author{Name = a}).ToList();
+            }
             book.Description = volumeInfo["description"]?.ToString();
             book.PageCount = volumeInfo["pageCount"] == null ? 0 : int.Parse( volumeInfo["pageCount"].ToString());
             book.Rating = volumeInfo["averageRating"] == null ? 0 : double.Parse( volumeInfo["averageRating"].ToString());
