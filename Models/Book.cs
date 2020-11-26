@@ -10,12 +10,13 @@ namespace WombatLibrarianApi.Models
     public class Book
     {
         public string Id { get; set; }
-        public List<Author> Authors { get; set; }
+        //public List<Author> Authors { get; set; }
         public string Title { get; set; }
         public string Thumbnail { get; set; }
         public string Description { get; set; }
         public int PageCount { get; set; }
         public double Rating { get; set; }
+        public double RatingCount { get; set; }
         public string Language { get; set; }
         public string Category { get; set; }
         public string MaturityRating { get; set; }
