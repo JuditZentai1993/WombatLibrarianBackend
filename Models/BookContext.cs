@@ -23,7 +23,7 @@ namespace WombatLibrarianApi.Models
         public async Task GetSearchResults(string searchTerm)
         {
             clearBookItems();
-            string url = $"{Configuration["GBooksURL"]}?q={searchTerm}&maxResults=10";
+            string url = $"{Configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
 
             using (var client = new HttpClient())
             {
@@ -59,7 +59,7 @@ namespace WombatLibrarianApi.Models
             book.Id = jToken["id"]?.ToString();
             book.Title = volumeInfo["title"]?.ToString();
             book.Subtitle = volumeInfo["subtitle"]?.ToString();
-            book.Thumbnail = volumeInfo["imageLinks"]["thumbnail"]?.ToString();
+            book.Thumbnail = volumeInfo["imageLinks"]?["thumbnail"]?.ToString();
             if (volumeInfo["authors"] != null)
             {
                 book.Authors = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["authors"]).ToString())
