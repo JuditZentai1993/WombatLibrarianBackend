@@ -58,6 +58,7 @@ namespace WombatLibrarianApi.Models
             Book book = new Book();
             book.Id = jToken["id"]?.ToString();
             book.Title = volumeInfo["title"]?.ToString();
+            book.Thumbnail = volumeInfo["imageLinks"]["thumbnail"]?.ToString();
             if (volumeInfo["authors"] != null)
             {
                 book.Authors = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["authors"]).ToString())
@@ -68,9 +69,13 @@ namespace WombatLibrarianApi.Models
             book.Rating = volumeInfo["averageRating"] == null ? 0 : double.Parse( volumeInfo["averageRating"].ToString());
             book.RatingCount = volumeInfo["ratingsCount"] == null ? 0 : double.Parse( volumeInfo["ratingsCount"].ToString());
             book.Language = volumeInfo["language"]?.ToString();
-            // book.Categories = volumeInfo["categories"]?.ToString(); // TODO: plural
+            if (volumeInfo["categories"] != null)
+            {
+                book.Categories = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["categories"]).ToString())
+                    .Select(c => new Category{Name = c}).ToList();
+            }
             book.MaturityRating = volumeInfo["maturityRating"]?.ToString();
-            // book.Published = DateTime.Parse(volumeInfo["publishedDate"]?.ToString());
+            book.Published = volumeInfo["publishedDate"]?.ToString();
             book.Publisher = volumeInfo["publisher"]?.ToString();
             return book;
         }
