@@ -18,9 +18,9 @@ namespace WombatLibrarianApi.Models
         public double Rating { get; set; }
         public double RatingCount { get; set; }
         public string Language { get; set; }
-        // public List<string> Categories { get; set; }
+        public List<Category> Categories { get; set; }
         public string MaturityRating { get; set; }
-        public DateTime Published { get; set; }
+        public string Published { get; set; }
         public string Publisher { get; set; }
     
         public override string ToString() => JsonSerializer.Serialize<Book>(this);
