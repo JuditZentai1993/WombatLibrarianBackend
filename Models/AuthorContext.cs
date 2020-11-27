@@ -1,29 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
 
 namespace WombatLibrarianApi.Models
 {
-    public class BookContext : DbContext
+    public class AuthorContext : DbContext
     {
-        public DbSet<Book> BookItems { get; set; }
+        public DbSet<Book> AuthorBookItems { get; set; }
         private readonly IConfiguration Configuration;
 
-        public BookContext(DbContextOptions<BookContext> options, IConfiguration configuration) : base(options)
+        public AuthorContext(DbContextOptions<AuthorContext> options, IConfiguration configuration) : base(options)
         {
             Configuration = configuration;
         }
 
-        public async Task GetSearchResults(string searchTerm)
+        public async Task<string> GetAuthorBooks(string author)
         {
             clearBookItems();
-            string url = $"{Configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
+            string url = $"{Configuration["GBooksURL"]}?q=inauthor:{author}";
 
             using (var client = new HttpClient())
             {
@@ -38,18 +37,18 @@ namespace WombatLibrarianApi.Models
                 IList<JToken> tokens = bookSearch["items"].Children().ToList();
                 foreach (JToken token in tokens)
                 {
-                    BookItems.Add(JsonHelper.parseJsonToken(token));
+                    AuthorBookItems.Add(JsonHelper.parseJsonToken(token));
                 }
                 await SaveChangesAsync();
+
+                return textResult;
             }
         }
 
         private void clearBookItems()
         {
-            BookItems.RemoveRange(BookItems);
+            AuthorBookItems.RemoveRange(AuthorBookItems);
             SaveChanges();
         }
-
-        
     }
 }

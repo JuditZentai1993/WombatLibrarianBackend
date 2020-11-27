@@ -11,27 +11,33 @@ namespace WombatLibrarianApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class BookShelfController : ControllerBase
     {
-        private readonly BookContext _context;
+        private readonly BookShelfContext _context;
 
-        public BooksController(BookContext context)
+        public BookShelfController(BookShelfContext context)
         {
             _context = context;
         }
 
-        // GET: api/Books
+        // GET: api/BookShelf
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBookItems()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBookShelfItems()
         {
-            return await _context.BookItems.ToListAsync();
+            return await _context.BookShelfItems
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
+                .ToListAsync();
         }
 
-        // GET: api/Books/5
+        // GET: api/BookShelf/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<Book>> GetBook(string id)
         {
-            var book = await _context.BookItems.FindAsync(id);
+            var book = await _context.BookShelfItems
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
+                .FirstOrDefaultAsync(bookShelfItem => bookShelfItem.Id == id);
 
             if (book == null)
             {
@@ -41,10 +47,10 @@ namespace WombatLibrarianApi.Controllers
             return book;
         }
 
-        // PUT: api/Books/5
+        // PUT: api/BookShelf/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(string id, Book book)
         {
             if (id != book.Id)
             {
@@ -72,36 +78,42 @@ namespace WombatLibrarianApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/BookShelf
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            _context.BookItems.Add(book);
+            Console.WriteLine(book.ToString());
+            _context.Authors.AddRange(book.Authors);
+            _context.Categories.AddRange(book.Categories);
+            _context.BookShelfItems.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction(
+                nameof(GetBook),
+                new { id = book.Id }, 
+                book);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/BookShelf/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.BookItems.FindAsync(id);
+            var book = await _context.BookShelfItems.FindAsync(id);
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.BookItems.Remove(book);
+            _context.BookShelfItems.Remove(book);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool BookExists(int id)
+        private bool BookExists(string id)
         {
-            return _context.BookItems.Any(e => e.Id == id);
+            return _context.BookShelfItems.Any(e => e.Id == id);
         }
     }
 }

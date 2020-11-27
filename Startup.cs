@@ -24,13 +24,23 @@ namespace WombatLibrarianApi
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+                                  });
+            });
             services.AddDbContext<BookContext>(opt => opt.UseInMemoryDatabase("BookList"));
+            services.AddDbContext<AuthorContext>(opt => opt.UseInMemoryDatabase("AuthorBookList"));
+            services.AddDbContext<BookShelfContext>(opt => opt.UseInMemoryDatabase("BookShelfList"));
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +54,8 @@ namespace WombatLibrarianApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
