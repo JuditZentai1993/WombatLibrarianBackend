@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -18,6 +21,7 @@ namespace WombatLibrarianApi.Models
 
         public async Task<string> GetAuthorBooks(string author)
         {
+            clearBookItems();
             string url = $"{Configuration["GBooksURL"]}?q=inauthor:{author}";
 
             using (var client = new HttpClient())
@@ -27,8 +31,24 @@ namespace WombatLibrarianApi.Models
                 var response = await client.GetAsync(uri);
 
                 string textResult = await response.Content.ReadAsStringAsync();
+
+                JObject bookSearch = JObject.Parse(textResult);
+
+                IList<JToken> tokens = bookSearch["items"].Children().ToList();
+                foreach (JToken token in tokens)
+                {
+                    AuthorBookItems.Add(JsonHelper.parseJsonToken(token));
+                }
+                await SaveChangesAsync();
+
                 return textResult;
             }
+        }
+
+        private void clearBookItems()
+        {
+            AuthorBookItems.RemoveRange(AuthorBookItems);
+            SaveChanges();
         }
     }
 }

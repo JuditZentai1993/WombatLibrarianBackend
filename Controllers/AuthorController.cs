@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WombatLibrarianApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WombatLibrarianApi.Controllers
 {
@@ -17,9 +19,10 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Author
         [HttpGet("{author}")]
-        public async Task<ActionResult<string>> GetAuthorBookItems(string author)
+        public async Task<ActionResult<IEnumerable<Book>>> GetAuthorBookItems(string author)
         {
-            return await _context.GetAuthorBooks(author);
+            await Task.Run(() => _context.GetAuthorBooks(author));
+            return await _context.AuthorBookItems.ToListAsync();
         }
     }
 }
