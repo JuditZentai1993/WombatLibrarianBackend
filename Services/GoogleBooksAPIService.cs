@@ -23,33 +23,38 @@ namespace WombatLibrarianApi.Services
             Context = context;
         }
 
-
-        public async Task<string> GetAuthorBooks(string author)
+        public async Task GetSearchResults(string searchTerm)
         {
-            if (AuthorBookItems != null)
+            BookItems.Clear();
+            string url = $"{_configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
+            IList<JToken> tokens = await GetBookItemsAsJToken(url);
+            foreach (JToken token in tokens)
             {
-                AuthorBookItems.Clear();
+                BookItems.Add(parseJsonToken(token));
             }
+        }
 
+        public async Task GetAuthorBooks(string author)
+        {
+            AuthorBookItems.Clear();
             string url = $"{_configuration["GBooksURL"]}?q=inauthor:{author}";
+            IList<JToken> tokens = await GetBookItemsAsJToken(url);
+            foreach (JToken token in tokens)
+            {
+                AuthorBookItems.Add(parseJsonToken(token));
+            }
+        }
 
+        private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
+        {
             using (var client = new HttpClient())
             {
                 var uri = new Uri(url);
-
                 var response = await client.GetAsync(uri);
-
                 string textResult = await response.Content.ReadAsStringAsync();
-
                 JObject bookSearch = JObject.Parse(textResult);
-
                 IList<JToken> tokens = bookSearch["items"].Children().ToList();
-                foreach (JToken token in tokens)
-                {
-                    AuthorBookItems.Add(parseJsonToken(token));
-                }
-
-                return textResult;
+                return tokens;
             }
         }
 
@@ -82,33 +87,6 @@ namespace WombatLibrarianApi.Services
             book.Published = volumeInfo["publishedDate"]?.ToString();
             book.Publisher = volumeInfo["publisher"]?.ToString();
             return book;
-        }
-
-        public async Task GetSearchResults(string searchTerm)
-        {
-            if (BookItems != null)
-            {
-                BookItems.Clear();
-            }
-
-            string url = $"{_configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
-
-            using (var client = new HttpClient())
-            {
-                var uri = new Uri(url);
-
-                var response = await client.GetAsync(uri);
-
-                string textResult = await response.Content.ReadAsStringAsync();
-
-                JObject bookSearch = JObject.Parse(textResult);
-
-                IList<JToken> tokens = bookSearch["items"].Children().ToList();
-                foreach (JToken token in tokens)
-                {
-                    BookItems.Add(parseJsonToken(token));
-                }
-            }
         }
     }
 }
