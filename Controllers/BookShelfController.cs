@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
+using WombatLibrarianApi.Services;
 
 namespace WombatLibrarianApi.Controllers
 {
@@ -13,18 +14,18 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class BookShelfController : ControllerBase
     {
-        private readonly BookShelfContext _context;
+        private readonly GoogleBooksAPIService _apiService;
 
-        public BookShelfController(BookShelfContext context)
+        public BookShelfController(GoogleBooksAPIService service)
         {
-            _context = context;
+            _apiService = service;
         }
 
         // GET: api/BookShelf
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBookShelfItems()
         {
-            return await _context.BookShelfItems
+            return await _apiService.Context.BookShelfItems
                 .Include(bookShelfItem => bookShelfItem.Authors)
                 .Include(bookShelfItem => bookShelfItem.Categories)
                 .ToListAsync();
@@ -34,7 +35,7 @@ namespace WombatLibrarianApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(string id)
         {
-            var book = await _context.BookShelfItems
+            var book = await _apiService.Context.BookShelfItems
                 .Include(bookShelfItem => bookShelfItem.Authors)
                 .Include(bookShelfItem => bookShelfItem.Categories)
                 .FirstOrDefaultAsync(bookShelfItem => bookShelfItem.Id == id);
@@ -57,11 +58,11 @@ namespace WombatLibrarianApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _apiService.Context.Entry(book).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _apiService.Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -83,11 +84,10 @@ namespace WombatLibrarianApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            Console.WriteLine(book.ToString());
-            _context.Authors.AddRange(book.Authors);
-            _context.Categories.AddRange(book.Categories);
-            _context.BookShelfItems.Add(book);
-            await _context.SaveChangesAsync();
+            _apiService.Context.Authors.AddRange(book.Authors);
+            _apiService.Context.Categories.AddRange(book.Categories);
+            _apiService.Context.BookShelfItems.Add(book);
+            await _apiService.Context.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(GetBook),
@@ -99,21 +99,21 @@ namespace WombatLibrarianApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.BookShelfItems.FindAsync(id);
+            var book = await _apiService.Context.BookShelfItems.FindAsync(id);
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.BookShelfItems.Remove(book);
-            await _context.SaveChangesAsync();
+            _apiService.Context.BookShelfItems.Remove(book);
+            await _apiService.Context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool BookExists(string id)
         {
-            return _context.BookShelfItems.Any(e => e.Id == id);
+            return _apiService.Context.BookShelfItems.Any(e => e.Id == id);
         }
     }
 }
