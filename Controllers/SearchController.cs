@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
+using WombatLibrarianApi.Services;
 
 namespace WombatLibrarianApi.Controllers
 {
@@ -11,19 +12,19 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private readonly BookContext _context;
+        private readonly GoogleBooksAPIService _apiService;
 
-        public SearchController(BookContext context)
+        public SearchController(GoogleBooksAPIService service)
         {
-            _context = context;
+            _apiService = service;
         }
 
         // GET: api/Books
         [HttpGet("{searchTerm}")]
         public async Task<ActionResult<IEnumerable<Book>>> GetBookItems(string searchTerm)
         {
-            await Task.Run(() => _context.GetSearchResults(searchTerm));
-            return await _context.BookItems.ToListAsync();
+            await _apiService.GetSearchResults(searchTerm);
+            return _apiService.BookItems;
         }
     }
 }
