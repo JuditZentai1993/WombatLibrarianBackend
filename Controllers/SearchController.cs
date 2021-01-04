@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 
@@ -19,7 +17,7 @@ namespace WombatLibrarianApi.Controllers
             _apiService = service;
         }
 
-        // GET: api/Books
+        // GET: api/Search/<searchphrase>
         [HttpGet("{searchTerm}")]
         public async Task<ActionResult<IEnumerable<Book>>> GetBookItems(string searchTerm)
         {
