@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
+using WombatLibrarianApi.Services;
 
 namespace WombatLibrarianApi
 {
@@ -37,9 +38,8 @@ namespace WombatLibrarianApi
                                       builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                                   });
             });
-            services.AddDbContext<BookContext>(opt => opt.UseInMemoryDatabase("BookList"));
-            services.AddDbContext<AuthorContext>(opt => opt.UseInMemoryDatabase("AuthorBookList"));
-            services.AddDbContext<BookShelfContext>(opt => opt.UseInMemoryDatabase("BookShelfList"));
+            services.AddScoped<GoogleBooksAPIService>();
+            services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
             services.AddControllers();
         }
 
