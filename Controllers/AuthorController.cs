@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WombatLibrarianApi.Models;
 using Microsoft.EntityFrameworkCore;
+using WombatLibrarianApi.Services;
 
 namespace WombatLibrarianApi.Controllers
 {
@@ -10,19 +11,19 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly AuthorContext _context;
+        private readonly GoogleBooksAPIService _apiService;
 
-        public AuthorController(AuthorContext context)
+        public AuthorController(GoogleBooksAPIService service)
         {
-            _context = context;
+            _apiService = service;
         }
 
         // GET: api/Author
         [HttpGet("{author}")]
         public async Task<ActionResult<IEnumerable<Book>>> GetAuthorBookItems(string author)
         {
-            await Task.Run(() => _context.GetAuthorBooks(author));
-            return await _context.AuthorBookItems.ToListAsync();
+            await _apiService.GetAuthorBooks(author);
+            return _apiService.AuthorBookItems;
         }
     }
 }
