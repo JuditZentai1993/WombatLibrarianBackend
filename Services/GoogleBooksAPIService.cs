@@ -10,10 +10,10 @@ using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Services
 {
-    public class GoogleBooksAPIService
+    public class GoogleBooksAPIService : BookAPIService
     {
         private readonly IConfiguration _configuration;
-        internal WombatBooksContext Context { get; }
+        public WombatBooksContext Context { get; }
         public List<Book> AuthorBookItems { get; set; } = new List<Book>();
         public List<Book> BookItems { get; set; } = new List<Book>();
 
@@ -58,7 +58,7 @@ namespace WombatLibrarianApi.Services
             }
         }
 
-        public static Book parseJsonToken(JToken jToken)
+        private Book parseJsonToken(JToken jToken)
         {
 
             JObject volumeInfo = (JObject)jToken["volumeInfo"];
