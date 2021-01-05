@@ -10,9 +10,9 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly GoogleBooksAPIService _apiService;
+        private readonly BookAPIService _apiService;
 
-        public AuthorController(GoogleBooksAPIService service)
+        public AuthorController(BookAPIService service)
         {
             _apiService = service;
         }
