@@ -38,7 +38,7 @@ namespace WombatLibrarianApi
                                       builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                                   });
             });
-            services.AddScoped<GoogleBooksAPIService>();
+            services.AddScoped<BookAPIService, GoogleBooksAPIService>();
             services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
             services.AddControllers();
         }
