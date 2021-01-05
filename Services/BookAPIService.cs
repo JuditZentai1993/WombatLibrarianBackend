@@ -8,7 +8,7 @@ namespace WombatLibrarianApi.Services
     {
         WombatBooksContext Context { get; }
         List<Book> AuthorBookItems { get; set; }
-        List<Book> BookItems { get; set; }
+        List<Book> SearchResults { get; set; }
         Task GetSearchResults(string searchTerm);
         Task GetAuthorBooks(string author);
     }

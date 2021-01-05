@@ -15,7 +15,7 @@ namespace WombatLibrarianApi.Services
         private readonly IConfiguration _configuration;
         public WombatBooksContext Context { get; }
         public List<Book> AuthorBookItems { get; set; } = new List<Book>();
-        public List<Book> BookItems { get; set; } = new List<Book>();
+        public List<Book> SearchResults { get; set; } = new List<Book>();
 
         public GoogleBooksAPIService(IConfiguration configuration, WombatBooksContext context)
         {
@@ -25,12 +25,12 @@ namespace WombatLibrarianApi.Services
 
         public async Task GetSearchResults(string searchTerm)
         {
-            BookItems.Clear();
+            SearchResults.Clear();
             string url = $"{_configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
             IList<JToken> tokens = await GetBookItemsAsJToken(url);
             foreach (JToken token in tokens)
             {
-                BookItems.Add(parseJsonToken(token));
+                SearchResults.Add(parseJsonToken(token));
             }
         }
 

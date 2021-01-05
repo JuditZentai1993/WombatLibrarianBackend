@@ -22,7 +22,7 @@ namespace WombatLibrarianApi.Controllers
         public async Task<ActionResult<IEnumerable<Book>>> GetBookItems(string searchTerm)
         {
             await _apiService.GetSearchResults(searchTerm);
-            return _apiService.BookItems;
+            return _apiService.SearchResults;
         }
     }
 }
