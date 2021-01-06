@@ -29,7 +29,7 @@ namespace WombatLibrarianApi.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/BookShelf/5
+        // GET: api/BookShelf/zwHiAAAAMAAJ
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(string id)
         {
@@ -46,7 +46,7 @@ namespace WombatLibrarianApi.Controllers
             return book;
         }
 
-        // PUT: api/BookShelf/5
+        // PUT: api/BookShelf/zwHiAAAAMAAJ
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(string id, Book book)
@@ -93,9 +93,9 @@ namespace WombatLibrarianApi.Controllers
                 book);
         }
 
-        // DELETE: api/BookShelf/5
+        // DELETE: api/BookShelf/zwHiAAAAMAAJ
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook(int id)
+        public async Task<IActionResult> DeleteBook(string id)
         {
             var book = await _apiService.Context.BookShelfItems.FindAsync(id);
             if (book == null)
