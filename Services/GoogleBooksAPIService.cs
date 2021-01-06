@@ -53,7 +53,14 @@ namespace WombatLibrarianApi.Services
                 var response = await client.GetAsync(uri);
                 string textResult = await response.Content.ReadAsStringAsync();
                 JObject bookSearch = JObject.Parse(textResult);
-                IList<JToken> tokens = bookSearch["items"].Children().ToList();
+                IList<JToken> tokens = new List<JToken>();
+                try
+                {
+                    tokens = bookSearch["items"].Children().ToList();
+                } catch(NullReferenceException error)
+                {
+                    Console.WriteLine(error);
+                }
                 return tokens;
             }
         }
