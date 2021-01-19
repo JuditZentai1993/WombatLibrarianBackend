@@ -12,9 +12,9 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class BookShelfController : ControllerBase
     {
-        private readonly BookAPIService _apiService;
+        private readonly IBookAPIService _apiService;
 
-        public BookShelfController(BookAPIService service)
+        public BookShelfController(IBookAPIService service)
         {
             _apiService = service;
         }
