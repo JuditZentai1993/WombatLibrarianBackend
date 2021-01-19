@@ -11,5 +11,6 @@ namespace WombatLibrarianApi.Services
         List<Book> SearchResults { get; set; }
         Task GetSearchResults(string searchTerm);
         Task GetAuthorBooks(string author);
+        Task<Bookshelf> AddBookToBookshelf(Book book);
     }
 }
