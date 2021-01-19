@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -43,6 +44,16 @@ namespace WombatLibrarianApi.Services
             {
                 AuthorBookItems.Add(parseJsonToken(token));
             }
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFromBookshelf()
+        {
+            var bookIds = Context.Bookshelves.Select(book => book.BookId).ToList();
+            return await Context.Books
+                .Where(book => bookIds.Contains(book.Id))
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
+                .ToListAsync();
         }
 
         public async Task<Bookshelf> AddBookToBookshelf(Book book)
