@@ -46,14 +46,39 @@ namespace WombatLibrarianApi.Services
             }
         }
 
-        public async Task<IEnumerable<Book>> GetBooksFromBookshelf()
+        public async Task<IEnumerable<object>> GetBooksFromBookshelf()
         {
             var bookIds = Context.Bookshelves.Select(book => book.BookId).ToList();
             return await Context.Books
                 .Where(book => bookIds.Contains(book.Id))
                 .Include(bookShelfItem => bookShelfItem.Authors)
                 .Include(bookShelfItem => bookShelfItem.Categories)
+                .Join(Context.Bookshelves,
+                book => book.Id,
+                bookshelf => bookshelf.BookId,
+                (book, bookshelf) => new 
+                        {
+                            Id = book.Id,
+                            Title = book.Title,
+                            Subtitle = book.Subtitle,
+                            Thumbnail = book.Thumbnail,
+                            Description = book.Description,
+                            PageCount = book.PageCount,
+                            Rating = book.Rating,
+                            RatingCount = book.RatingCount,
+                            Language = book.Language,
+                            MaturityRating = book.MaturityRating,
+                            Published = book.Published,
+                            Publisher = book.Publisher,
+                            BookshelfId = bookshelf.Id
+                        })
                 .ToListAsync();
+
+            //return await Context.Books
+            //    .Where(book => bookIds.Contains(book.Id))
+            //    .Include(bookShelfItem => bookShelfItem.Authors)
+            //    .Include(bookShelfItem => bookShelfItem.Categories)
+            //    .ToListAsync();
         }
 
         public async Task<Bookshelf> AddBookToBookshelf(Book book)
