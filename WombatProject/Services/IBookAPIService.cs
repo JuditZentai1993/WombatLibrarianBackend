@@ -4,7 +4,7 @@ using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Services
 {
-    public interface BookAPIService
+    public interface IBookAPIService
     {
         WombatBooksContext Context { get; }
         List<Book> AuthorBookItems { get; set; }

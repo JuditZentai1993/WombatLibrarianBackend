@@ -10,7 +10,7 @@ using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Services
 {
-    public class GoogleBooksAPIService : BookAPIService
+    public class GoogleBooksAPIService : IBookAPIService
     {
         private readonly IConfiguration _configuration;
         public WombatBooksContext Context { get; }
@@ -47,22 +47,22 @@ namespace WombatLibrarianApi.Services
 
         private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
         {
-            using (var client = new HttpClient())
+            var client = new HttpClient();
+            var uri = new Uri(url);
+            var response = await client.GetAsync(uri);
+            string textResult = await response.Content.ReadAsStringAsync();
+            JObject bookSearch = JObject.Parse(textResult);
+            IList<JToken> tokens = new List<JToken>();
+            try
             {
-                var uri = new Uri(url);
-                var response = await client.GetAsync(uri);
-                string textResult = await response.Content.ReadAsStringAsync();
-                JObject bookSearch = JObject.Parse(textResult);
-                IList<JToken> tokens = new List<JToken>();
-                try
-                {
-                    tokens = bookSearch["items"].Children().ToList();
-                } catch(NullReferenceException error)
-                {
-                    Console.WriteLine(error);
-                }
-                return tokens;
+                tokens = bookSearch["items"].Children().ToList();
             }
+            catch (NullReferenceException error)
+            {
+                Console.WriteLine(error);
+            }
+            return tokens;
+
         }
 
         private Book parseJsonToken(JToken jToken)
