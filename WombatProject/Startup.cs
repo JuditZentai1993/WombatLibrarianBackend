@@ -51,7 +51,6 @@ namespace WombatLibrarianApi
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
