@@ -38,8 +38,8 @@ namespace WombatLibrarianApi
                                       builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                                   });
             });
-            services.AddScoped<BookAPIService, GoogleBooksAPIService>();
-            services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
+            services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
+            services.AddDbContext<WombatBooksContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("databaseConnection")));
             services.AddControllers();
         }
 
@@ -50,6 +50,7 @@ namespace WombatLibrarianApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
 
             app.UseHttpsRedirection();
 
