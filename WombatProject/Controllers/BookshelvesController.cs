@@ -76,10 +76,15 @@ namespace WombatLibrarianApi.Controllers
         // POST: api/Bookshelves
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Bookshelf>> PostBookshelf(Bookshelf bookshelf)
+        public async Task<ActionResult<Bookshelf>> PostBookshelf(Book book)
         {
-            _apiService.Context.Bookshelves.Add(bookshelf);
-            await _apiService.Context.SaveChangesAsync();
+            //_apiService.Context.Authors.AddRange(book.Authors);
+            //_apiService.Context.Categories.AddRange(book.Categories);
+            //_apiService.Context.Books.Add(book);
+            //Bookshelf bookshelf = new Bookshelf() { BookId = book.Id };
+            //_apiService.Context.Bookshelves.Add(bookshelf);
+            //await _apiService.Context.SaveChangesAsync();
+            var bookshelf = await _apiService.AddBookToBookshelf(book);
 
             return CreatedAtAction("GetBookshelf", new { id = bookshelf.Id }, bookshelf);
         }
