@@ -23,9 +23,10 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Bookshelves
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bookshelf>>> GetBookshelves()
+        public async Task<IActionResult> GetBookshelves()
         {
-            return await _apiService.Context.Bookshelves.ToListAsync();
+            var books = await _apiService.GetBooksFromBookshelf();
+            return Ok(books);
         }
 
         // GET: api/Bookshelves/5
@@ -78,12 +79,6 @@ namespace WombatLibrarianApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Bookshelf>> PostBookshelf(Book book)
         {
-            //_apiService.Context.Authors.AddRange(book.Authors);
-            //_apiService.Context.Categories.AddRange(book.Categories);
-            //_apiService.Context.Books.Add(book);
-            //Bookshelf bookshelf = new Bookshelf() { BookId = book.Id };
-            //_apiService.Context.Bookshelves.Add(bookshelf);
-            //await _apiService.Context.SaveChangesAsync();
             var bookshelf = await _apiService.AddBookToBookshelf(book);
 
             return CreatedAtAction("GetBookshelf", new { id = bookshelf.Id }, bookshelf);
