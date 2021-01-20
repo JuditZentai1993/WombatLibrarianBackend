@@ -136,5 +136,39 @@ namespace WombatLibrarianApi.Services
             book.Publisher = volumeInfo["publisher"]?.ToString();
             return book;
         }
+
+        public async Task<IEnumerable<object>> GetBooksFromWishlist()
+        {
+            var bookIds = Context.Wishlists.Select(book => book.BookId).ToList();
+            return await Context.Books
+                .Where(book => bookIds.Contains(book.Id))
+                .Include(wishlistItem => wishlistItem.Authors)
+                .Include(wishlistItem => wishlistItem.Categories)
+                .Join(Context.Wishlists,
+                book => book.Id,
+                wishlist => wishlist.BookId,
+                (book, wishlist) => new
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Thumbnail = book.Thumbnail,
+                    Description = book.Description,
+                    PageCount = book.PageCount,
+                    Rating = book.Rating,
+                    RatingCount = book.RatingCount,
+                    Language = book.Language,
+                    MaturityRating = book.MaturityRating,
+                    Published = book.Published,
+                    Publisher = book.Publisher,
+                    WishlistId = wishlist.Id
+                })
+                .ToListAsync();
+        }
+
+        public Task<Bookshelf> AddBookToWishlist(Book book)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
