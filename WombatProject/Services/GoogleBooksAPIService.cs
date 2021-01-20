@@ -73,12 +73,6 @@ namespace WombatLibrarianApi.Services
                             BookshelfId = bookshelf.Id
                         })
                 .ToListAsync();
-
-            //return await Context.Books
-            //    .Where(book => bookIds.Contains(book.Id))
-            //    .Include(bookShelfItem => bookShelfItem.Authors)
-            //    .Include(bookShelfItem => bookShelfItem.Categories)
-            //    .ToListAsync();
         }
 
         public async Task<Bookshelf> AddBookToBookshelf(Book book)
