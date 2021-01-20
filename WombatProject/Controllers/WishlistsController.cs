@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
+using WombatLibrarianApi.Services;
 
 namespace WombatLibrarianApi.Controllers
 {
@@ -13,25 +14,26 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class WishlistsController : ControllerBase
     {
-        private readonly WombatBooksContext _context;
+        private readonly IBookAPIService _apiService;
 
-        public WishlistsController(WombatBooksContext context)
+        public WishlistsController(IBookAPIService service)
         {
-            _context = context;
+            _apiService = service;
         }
 
         // GET: api/Wishlists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Wishlist>>> GetWishlists()
+        public async Task<IActionResult> GetWishlists()
         {
-            return await _context.Wishlists.ToListAsync();
+            var books = await _apiService.GetBooksFromWishlist();
+            return Ok(books);
         }
 
         // GET: api/Wishlists/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Wishlist>> GetWishlist(int id)
         {
-            var wishlist = await _context.Wishlists.FindAsync(id);
+            var wishlist = await _apiService.Context.Wishlists.FindAsync(id);
 
             if (wishlist == null)
             {
@@ -51,11 +53,11 @@ namespace WombatLibrarianApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(wishlist).State = EntityState.Modified;
+            _apiService.Context.Entry(wishlist).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _apiService.Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -75,10 +77,9 @@ namespace WombatLibrarianApi.Controllers
         // POST: api/Wishlists
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Wishlist>> PostWishlist(Wishlist wishlist)
+        public async Task<ActionResult<Wishlist>> PostWishlist(Book book)
         {
-            _context.Wishlists.Add(wishlist);
-            await _context.SaveChangesAsync();
+            var wishlist = await _apiService.AddBookToWishlist(book);
 
             return CreatedAtAction("GetWishlist", new { id = wishlist.Id }, wishlist);
         }
@@ -87,21 +88,21 @@ namespace WombatLibrarianApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWishlist(int id)
         {
-            var wishlist = await _context.Wishlists.FindAsync(id);
+            var wishlist = await _apiService.Context.Wishlists.FindAsync(id);
             if (wishlist == null)
             {
                 return NotFound();
             }
 
-            _context.Wishlists.Remove(wishlist);
-            await _context.SaveChangesAsync();
+            _apiService.Context.Wishlists.Remove(wishlist);
+            await _apiService.Context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool WishlistExists(int id)
         {
-            return _context.Wishlists.Any(e => e.Id == id);
+            return _apiService.Context.Wishlists.Any(e => e.Id == id);
         }
     }
 }
