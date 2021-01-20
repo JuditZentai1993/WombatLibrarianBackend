@@ -13,5 +13,8 @@ namespace WombatLibrarianApi.Services
         Task GetAuthorBooks(string author);
         Task<IEnumerable<object>> GetBooksFromBookshelf();
         Task<Bookshelf> AddBookToBookshelf(Book book);
+        Task<IEnumerable<object>> GetBooksFromWishlist();
+        Task<Bookshelf> AddBookToWishlist(Book book);
+
     }
 }
