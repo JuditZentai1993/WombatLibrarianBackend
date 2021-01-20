@@ -166,9 +166,15 @@ namespace WombatLibrarianApi.Services
                 .ToListAsync();
         }
 
-        public Task<Bookshelf> AddBookToWishlist(Book book)
+        public async Task<Wishlist> AddBookToWishlist(Book book)
         {
-            throw new NotImplementedException();
+            Context.Authors.AddRange(book.Authors);
+            Context.Categories.AddRange(book.Categories);
+            Context.Books.Add(book);
+            Wishlist wishlist = new Wishlist() { BookId = book.Id };
+            Context.Wishlists.Add(wishlist);
+            await Context.SaveChangesAsync();
+            return wishlist;
         }
     }
 }
