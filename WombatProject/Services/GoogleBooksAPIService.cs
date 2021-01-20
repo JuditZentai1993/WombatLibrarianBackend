@@ -77,13 +77,17 @@ namespace WombatLibrarianApi.Services
 
         public async Task<Bookshelf> AddBookToBookshelf(Book book)
         {
-            Context.Authors.AddRange(book.Authors);
-            Context.Categories.AddRange(book.Categories);
-            Context.Books.Add(book);
+            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+            if (bookItem == null) {
+                Context.Authors.AddRange(book.Authors);
+                Context.Categories.AddRange(book.Categories);
+                Context.Books.Add(book);
+            }
             Bookshelf bookshelf = new Bookshelf() { BookId = book.Id };
             Context.Bookshelves.Add(bookshelf);
             await Context.SaveChangesAsync();
             return bookshelf;
+
         }
 
         private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
@@ -168,9 +172,14 @@ namespace WombatLibrarianApi.Services
 
         public async Task<Wishlist> AddBookToWishlist(Book book)
         {
-            Context.Authors.AddRange(book.Authors);
-            Context.Categories.AddRange(book.Categories);
-            Context.Books.Add(book);
+            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+
+            if (bookItem == null)
+            {
+                Context.Authors.AddRange(book.Authors);
+                Context.Categories.AddRange(book.Categories);
+                Context.Books.Add(book);
+            }
             Wishlist wishlist = new Wishlist() { BookId = book.Id };
             Context.Wishlists.Add(wishlist);
             await Context.SaveChangesAsync();
