@@ -38,9 +38,10 @@ namespace WombatLibrarianApi
                                       builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                                   });
             });
-            services.AddScoped<BookAPIService, GoogleBooksAPIService>();
-            services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
+            services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
+            services.AddDbContext<WombatBooksContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("databaseConnection")));
             services.AddControllers();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +64,9 @@ namespace WombatLibrarianApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("../swagger/v1/swagger.json", "New application"); });
         }
     }
 }

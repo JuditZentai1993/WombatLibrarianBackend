@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,7 +11,7 @@ using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Services
 {
-    public class GoogleBooksAPIService : BookAPIService
+    public class GoogleBooksAPIService : IBookAPIService
     {
         private readonly IConfiguration _configuration;
         public WombatBooksContext Context { get; }
@@ -45,24 +46,68 @@ namespace WombatLibrarianApi.Services
             }
         }
 
+        public async Task<IEnumerable<object>> GetBooksFromBookshelf()
+        {
+            var bookIds = Context.Bookshelves.Select(book => book.BookId).ToList();
+            return await Context.Books
+                .Where(book => bookIds.Contains(book.Id))
+                .Include(bookShelfItem => bookShelfItem.Authors)
+                .Include(bookShelfItem => bookShelfItem.Categories)
+                .Join(Context.Bookshelves,
+                book => book.Id,
+                bookshelf => bookshelf.BookId,
+                (book, bookshelf) => new 
+                        {
+                            Id = book.Id,
+                            Title = book.Title,
+                            Subtitle = book.Subtitle,
+                            Thumbnail = book.Thumbnail,
+                            Description = book.Description,
+                            PageCount = book.PageCount,
+                            Rating = book.Rating,
+                            RatingCount = book.RatingCount,
+                            Language = book.Language,
+                            MaturityRating = book.MaturityRating,
+                            Published = book.Published,
+                            Publisher = book.Publisher,
+                            BookshelfId = bookshelf.Id
+                        })
+                .ToListAsync();
+        }
+
+        public async Task<Bookshelf> AddBookToBookshelf(Book book)
+        {
+            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+            if (bookItem == null) {
+                Context.Authors.AddRange(book.Authors);
+                Context.Categories.AddRange(book.Categories);
+                Context.Books.Add(book);
+            }
+            Bookshelf bookshelf = new Bookshelf() { BookId = book.Id };
+            Context.Bookshelves.Add(bookshelf);
+            await Context.SaveChangesAsync();
+            return bookshelf;
+
+        }
+
         private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
         {
-            using (var client = new HttpClient())
+            var client = new HttpClient();
+            var uri = new Uri(url);
+            var response = await client.GetAsync(uri);
+            string textResult = await response.Content.ReadAsStringAsync();
+            JObject bookSearch = JObject.Parse(textResult);
+            IList<JToken> tokens = new List<JToken>();
+            try
             {
-                var uri = new Uri(url);
-                var response = await client.GetAsync(uri);
-                string textResult = await response.Content.ReadAsStringAsync();
-                JObject bookSearch = JObject.Parse(textResult);
-                IList<JToken> tokens = new List<JToken>();
-                try
-                {
-                    tokens = bookSearch["items"].Children().ToList();
-                } catch(NullReferenceException error)
-                {
-                    Console.WriteLine(error);
-                }
-                return tokens;
+                tokens = bookSearch["items"].Children().ToList();
             }
+            catch (NullReferenceException error)
+            {
+                Console.WriteLine(error);
+            }
+            return tokens;
+
         }
 
         private Book parseJsonToken(JToken jToken)
@@ -94,6 +139,51 @@ namespace WombatLibrarianApi.Services
             book.Published = volumeInfo["publishedDate"]?.ToString();
             book.Publisher = volumeInfo["publisher"]?.ToString();
             return book;
+        }
+
+        public async Task<IEnumerable<object>> GetBooksFromWishlist()
+        {
+            var bookIds = Context.Wishlists.Select(book => book.BookId).ToList();
+            return await Context.Books
+                .Where(book => bookIds.Contains(book.Id))
+                .Include(wishlistItem => wishlistItem.Authors)
+                .Include(wishlistItem => wishlistItem.Categories)
+                .Join(Context.Wishlists,
+                book => book.Id,
+                wishlist => wishlist.BookId,
+                (book, wishlist) => new
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Thumbnail = book.Thumbnail,
+                    Description = book.Description,
+                    PageCount = book.PageCount,
+                    Rating = book.Rating,
+                    RatingCount = book.RatingCount,
+                    Language = book.Language,
+                    MaturityRating = book.MaturityRating,
+                    Published = book.Published,
+                    Publisher = book.Publisher,
+                    WishlistId = wishlist.Id
+                })
+                .ToListAsync();
+        }
+
+        public async Task<Wishlist> AddBookToWishlist(Book book)
+        {
+            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+
+            if (bookItem == null)
+            {
+                Context.Authors.AddRange(book.Authors);
+                Context.Categories.AddRange(book.Categories);
+                Context.Books.Add(book);
+            }
+            Wishlist wishlist = new Wishlist() { BookId = book.Id };
+            Context.Wishlists.Add(wishlist);
+            await Context.SaveChangesAsync();
+            return wishlist;
         }
     }
 }
