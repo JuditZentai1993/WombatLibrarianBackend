@@ -40,44 +40,6 @@ namespace WombatLibrarianApi.Controllers
             return bookshelf;
         }
 
-        // PUT: api/Bookshelves/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookshelf(int id, Bookshelf bookshelf)
-        {
-            // validate input params -> id != bookshelf.Id -> return BadRequest();
-            // try {
-            // _repository.UpdateBookShelf(id, bookshelf);
-            // } catch (ArgumentException ex){
-            //  return NotFound();
-            // }
-            // return NoContent();
-            if (id != bookshelf.Id)
-            {
-                return BadRequest();
-            }
-
-            _repository.Context.Entry(bookshelf).State = EntityState.Modified;
-
-            try
-            {
-                await _repository.Context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookshelfExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Bookshelves
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
