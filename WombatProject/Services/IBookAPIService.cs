@@ -6,15 +6,10 @@ namespace WombatLibrarianApi.Services
 {
     public interface IBookAPIService
     {
-        WombatBooksContext Context { get; }
-        List<Book> AuthorBookItems { get; set; }
-        List<Book> SearchResults { get; set; }
+        List<Book> SearchResults { get; }
+        List<Book> AuthorBookItems { get; }
+        
         Task GetSearchResults(string searchTerm);
         Task GetAuthorBooks(string author);
-        Task<IEnumerable<object>> GetBooksFromBookshelf();
-        Task<Bookshelf> AddBookToBookshelf(Book book);
-        Task<IEnumerable<object>> GetBooksFromWishlist();
-        Task<Wishlist> AddBookToWishlist(Book book);
-
     }
 }

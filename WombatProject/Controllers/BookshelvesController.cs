@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
@@ -14,18 +11,18 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class BookshelvesController : ControllerBase
     {
-        private readonly IBookAPIService _apiService;
+        private readonly IBookRepository _repository;
 
-        public BookshelvesController(IBookAPIService service)
+        public BookshelvesController(IBookRepository repository)
         {
-            _apiService = service;
+            this._repository = repository;
         }
 
         // GET: api/Bookshelves
         [HttpGet]
         public async Task<IActionResult> GetBookshelves()
         {
-            var books = await _apiService.GetBooksFromBookshelf();
+            var books = await _repository.GetBooksFromBookshelf();
             return Ok(books);
         }
 
@@ -33,7 +30,7 @@ namespace WombatLibrarianApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Bookshelf>> GetBookshelf(int id)
         {
-            var bookshelf = await _apiService.Context.Bookshelves.FindAsync(id);
+            var bookshelf = await _repository.GetBookShelveByIdAsync(id);
 
             if (bookshelf == null)
             {
@@ -48,16 +45,23 @@ namespace WombatLibrarianApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBookshelf(int id, Bookshelf bookshelf)
         {
+            // validate input params -> id != bookshelf.Id -> return BadRequest();
+            // try {
+            // _repository.UpdateBookShelf(id, bookshelf);
+            // } catch (ArgumentException ex){
+            //  return NotFound();
+            // }
+            // return NoContent();
             if (id != bookshelf.Id)
             {
                 return BadRequest();
             }
 
-            _apiService.Context.Entry(bookshelf).State = EntityState.Modified;
+            _repository.Context.Entry(bookshelf).State = EntityState.Modified;
 
             try
             {
-                await _apiService.Context.SaveChangesAsync();
+                await _repository.Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -79,7 +83,7 @@ namespace WombatLibrarianApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Bookshelf>> PostBookshelf(Book book)
         {
-            var bookshelf = await _apiService.AddBookToBookshelf(book);
+            var bookshelf = await _repository.AddBookToBookshelf(book);
 
             return CreatedAtAction("GetBookshelf", new { id = bookshelf.Id }, bookshelf);
         }
@@ -88,21 +92,21 @@ namespace WombatLibrarianApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookshelf(int id)
         {
-            var bookshelf = await _apiService.Context.Bookshelves.FindAsync(id);
+            var bookshelf = await _repository.Context.Bookshelves.FindAsync(id);
             if (bookshelf == null)
             {
                 return NotFound();
             }
 
-            _apiService.Context.Bookshelves.Remove(bookshelf);
-            await _apiService.Context.SaveChangesAsync();
+            _repository.Context.Bookshelves.Remove(bookshelf);
+            await _repository.Context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool BookshelfExists(int id)
         {
-            return _apiService.Context.Bookshelves.Any(e => e.Id == id);
+            return _repository.Context.Bookshelves.Any(e => e.Id == id);
         }
     }
 }
