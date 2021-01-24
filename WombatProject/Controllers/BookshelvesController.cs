@@ -20,7 +20,7 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Bookshelves
         [HttpGet]
-        public async Task<IActionResult> GetBookshelves()
+        public async Task<IActionResult> GetBookshelfItems()
         {
             var books = await _repository.GetBooksFromBookshelf();
             return Ok(books);
@@ -28,9 +28,9 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Bookshelves/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bookshelf>> GetBookshelf(int id)
+        public async Task<ActionResult<Bookshelf>> GetBookshelfItemById(int id)
         {
-            var bookshelf = await _repository.GetBookShelveByIdAsync(id);
+            var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
 
             if (bookshelf == null)
             {
@@ -41,9 +41,8 @@ namespace WombatLibrarianApi.Controllers
         }
 
         // POST: api/Bookshelves
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Bookshelf>> PostBookshelf(Book book)
+        public async Task<ActionResult<Bookshelf>> AddItemToBookshelf(Book book)
         {
             var bookshelf = await _repository.AddBookToBookshelf(book);
 
@@ -52,7 +51,7 @@ namespace WombatLibrarianApi.Controllers
 
         // DELETE: api/Bookshelves/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBookshelf(int id)
+        public async Task<IActionResult> RemoveBookFromBookshelf(int id)
         {
             var bookshelf = await _repository.Context.Bookshelves.FindAsync(id);
             if (bookshelf == null)
