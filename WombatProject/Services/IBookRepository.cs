@@ -9,9 +9,9 @@ namespace WombatLibrarianApi.Services
         WombatBooksContext Context { get; }
 
         Task<IEnumerable<object>> GetBooksFromBookshelf();
+        Task<Bookshelf> GetBookshelfItemByIdAsync(int id);
         Task<Bookshelf> AddBookToBookshelf(Book book);
         Task<IEnumerable<object>> GetBooksFromWishlist();
         Task<Wishlist> AddBookToWishlist(Book book);
-        Task<Bookshelf> GetBookShelveByIdAsync(int id);
     }
 }

@@ -101,7 +101,7 @@ namespace WombatLibrarianApi.Services
             await Context.SaveChangesAsync();
             return wishlist;
         }
-        public async Task<Bookshelf> GetBookShelveByIdAsync(int id)
+        public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
         {
             return await Context.Bookshelves.FindAsync(id);
         }
