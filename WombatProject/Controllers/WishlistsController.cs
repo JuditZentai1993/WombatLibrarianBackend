@@ -15,20 +15,20 @@ namespace WombatLibrarianApi.Controllers
 
         public WishlistsController(IBookRepository repository)
         {
-            _repository = repository;
+            this._repository = repository;
         }
 
         // GET: api/Wishlists
         [HttpGet]
-        public async Task<IActionResult> GetWishlists()
+        public async Task<IActionResult> GetWishlistItems()
         {
-            var books = await _repository.GetBooksFromWishlist();
+            var books = await _repository.GetBooksFromWishlistAsync();
             return Ok(books);
         }
 
         // GET: api/Wishlists/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Wishlist>> GetWishlist(int id)
+        public async Task<ActionResult<Wishlist>> GetWishlistItemById(int id)
         {
             var wishlist = await _repository.Context.Wishlists.FindAsync(id);
 
@@ -40,50 +40,18 @@ namespace WombatLibrarianApi.Controllers
             return wishlist;
         }
 
-        // PUT: api/Wishlists/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWishlist(int id, Wishlist wishlist)
-        {
-            if (id != wishlist.Id)
-            {
-                return BadRequest();
-            }
-
-            _repository.Context.Entry(wishlist).State = EntityState.Modified;
-
-            try
-            {
-                await _repository.Context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WishlistExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Wishlists
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Wishlist>> PostWishlist(Book book)
+        public async Task<ActionResult<Wishlist>> AddItemToWishlist(Book book)
         {
-            var wishlist = await _repository.AddBookToWishlist(book);
+            var wishlist = await _repository.AddBookToWishlistAsync(book);
 
-            return CreatedAtAction("GetWishlist", new { id = wishlist.Id }, wishlist);
+            return CreatedAtAction("GetWishlistItemById", new { id = wishlist.Id }, wishlist);
         }
 
         // DELETE: api/Wishlists/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWishlist(int id)
+        public async Task<IActionResult> RemoveBookFromWishlist(int id)
         {
             var wishlist = await _repository.Context.Wishlists.FindAsync(id);
             if (wishlist == null)

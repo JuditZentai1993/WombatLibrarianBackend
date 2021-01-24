@@ -71,7 +71,7 @@ namespace WombatLibrarianApi.Services
             return await Context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<object>> GetBooksFromWishlist()
+        public async Task<IEnumerable<object>> GetBooksFromWishlistAsync()
         {
             var bookIds = Context.Wishlists.Select(book => book.BookId).ToList();
             return await Context.Books
@@ -100,7 +100,7 @@ namespace WombatLibrarianApi.Services
                 .ToListAsync();
         }
 
-        public async Task<Wishlist> AddBookToWishlist(Book book)
+        public async Task<Wishlist> AddBookToWishlistAsync(Book book)
         {
             var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
 
