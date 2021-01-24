@@ -22,7 +22,7 @@ namespace WombatLibrarianApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBookshelfItems()
         {
-            var books = await _repository.GetBooksFromBookshelf();
+            var books = await _repository.GetBooksFromBookshelfAsync();
             return Ok(books);
         }
 
@@ -44,30 +44,24 @@ namespace WombatLibrarianApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Bookshelf>> AddItemToBookshelf(Book book)
         {
-            var bookshelf = await _repository.AddBookToBookshelf(book);
+            var bookshelf = await _repository.AddBookToBookshelfAsync(book);
 
-            return CreatedAtAction("GetBookshelf", new { id = bookshelf.Id }, bookshelf);
+            return CreatedAtAction("GetBookshelfItemById", new { id = bookshelf.Id }, bookshelf);
         }
 
         // DELETE: api/Bookshelves/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveBookFromBookshelf(int id)
         {
-            var bookshelf = await _repository.Context.Bookshelves.FindAsync(id);
+            var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
             if (bookshelf == null)
             {
                 return NotFound();
             }
 
-            _repository.Context.Bookshelves.Remove(bookshelf);
-            await _repository.Context.SaveChangesAsync();
+           await _repository.RemoveBookFromBookshelfById(bookshelf);
 
             return NoContent();
-        }
-
-        private bool BookshelfExists(int id)
-        {
-            return _repository.Context.Bookshelves.Any(e => e.Id == id);
         }
     }
 }
