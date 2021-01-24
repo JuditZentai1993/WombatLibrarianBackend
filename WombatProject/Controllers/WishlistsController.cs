@@ -30,7 +30,7 @@ namespace WombatLibrarianApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Wishlist>> GetWishlistItemById(int id)
         {
-            var wishlist = await _repository.Context.Wishlists.FindAsync(id);
+            var wishlist = await _repository.GetWishlistItemByIdAsync(id);
 
             if (wishlist == null)
             {

@@ -100,6 +100,11 @@ namespace WombatLibrarianApi.Services
                 .ToListAsync();
         }
 
+        public async Task<Wishlist> GetWishlistItemByIdAsync(int id)
+        {
+            return await Context.Wishlists.FindAsync(id);
+        }
+
         public async Task<Wishlist> AddBookToWishlistAsync(Book book)
         {
             var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
