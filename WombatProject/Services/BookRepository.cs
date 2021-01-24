@@ -15,7 +15,7 @@ namespace WombatLibrarianApi.Services
             Context = context;
         }
 
-        public async Task<IEnumerable<object>> GetBooksFromBookshelf()
+        public async Task<IEnumerable<object>> GetBooksFromBookshelfAsync()
         {
             var bookIds = Context.Bookshelves.Select(book => book.BookId).ToList();
             return await Context.Books
@@ -43,7 +43,13 @@ namespace WombatLibrarianApi.Services
                 })
                 .ToListAsync();
         }
-        public async Task<Bookshelf> AddBookToBookshelf(Book book)
+
+        public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
+        {
+            return await Context.Bookshelves.FindAsync(id);
+        }
+
+        public async Task<Bookshelf> AddBookToBookshelfAsync(Book book)
         {
             var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
             if (bookItem == null)
@@ -58,6 +64,13 @@ namespace WombatLibrarianApi.Services
             return bookshelf;
 
         }
+
+        public async Task<int> RemoveBookFromBookshelfById(Bookshelf bookshelf)
+        {
+            Context.Bookshelves.Remove(bookshelf);
+            return await Context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<object>> GetBooksFromWishlist()
         {
             var bookIds = Context.Wishlists.Select(book => book.BookId).ToList();
@@ -86,6 +99,7 @@ namespace WombatLibrarianApi.Services
                 })
                 .ToListAsync();
         }
+
         public async Task<Wishlist> AddBookToWishlist(Book book)
         {
             var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
@@ -100,10 +114,6 @@ namespace WombatLibrarianApi.Services
             Context.Wishlists.Add(wishlist);
             await Context.SaveChangesAsync();
             return wishlist;
-        }
-        public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
-        {
-            return await Context.Bookshelves.FindAsync(id);
         }
     }
 }
