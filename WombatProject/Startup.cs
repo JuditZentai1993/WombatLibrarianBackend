@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
+using WombatLibrarianApi.Settings;
 
 namespace WombatLibrarianApi
 {
@@ -22,6 +23,7 @@ namespace WombatLibrarianApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GoogleApiSettings>(Configuration.GetSection("GoogleAPI"));
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
