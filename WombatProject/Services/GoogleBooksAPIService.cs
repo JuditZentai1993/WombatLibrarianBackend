@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,24 +8,25 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using WombatLibrarianApi.Models;
+using WombatLibrarianApi.Settings;
 
 namespace WombatLibrarianApi.Services
 {
     public class GoogleBooksAPIService : IBookAPIService
     {
-        private readonly IConfiguration _configuration;
+        protected readonly GoogleApiSettings _googleApiSettings;
         public List<Book> AuthorBookItems { get; } = new List<Book>();
         public List<Book> SearchResults { get; } = new List<Book>();
 
-        public GoogleBooksAPIService(IConfiguration configuration)
+        public GoogleBooksAPIService(IOptions<GoogleApiSettings> settings)
         {
-            _configuration = configuration;
+            this._googleApiSettings = settings.Value;
         }
 
         public async Task GetSearchResults(string searchTerm)
         {
             SearchResults.Clear();
-            string url = $"{_configuration["GBooksURL"]}?q={searchTerm}&maxResults=40";
+            string url = $"{_googleApiSettings.GoogleBooksURL}?q={searchTerm}&maxResults=40";
             IList<JToken> tokens = await GetBookItemsAsJToken(url);
             foreach (JToken token in tokens)
             {
@@ -35,7 +37,7 @@ namespace WombatLibrarianApi.Services
         public async Task GetAuthorBooks(string author)
         {
             AuthorBookItems.Clear();
-            string url = $"{_configuration["GBooksURL"]}?q=inauthor:{author}";
+            string url = $"{_googleApiSettings.GoogleBooksURL}?q=inauthor:{author}";
             IList<JToken> tokens = await GetBookItemsAsJToken(url);
             foreach (JToken token in tokens)
             {
