@@ -8,21 +8,21 @@ namespace WombatLibrarianApi.Services
 {
     public class BookRepository : IBookRepository
     {
-        public WombatBooksContext Context { get; }
+        protected WombatBooksContext _context { get; }
 
         public BookRepository(WombatBooksContext context)
         {
-            Context = context;
+            _context = context;
         }
 
         public async Task<IEnumerable<object>> GetBooksFromBookshelfAsync()
         {
-            var bookIds = Context.Bookshelves.Select(book => book.BookId).ToList();
-            return await Context.Books
+            var bookIds = _context.Bookshelves.Select(book => book.BookId).ToList();
+            return await _context.Books
                 .Where(book => bookIds.Contains(book.Id))
                 .Include(bookShelfItem => bookShelfItem.Authors)
                 .Include(bookShelfItem => bookShelfItem.Categories)
-                .Join(Context.Bookshelves,
+                .Join(_context.Bookshelves,
                 book => book.Id,
                 bookshelf => bookshelf.BookId,
                 (book, bookshelf) => new
@@ -46,39 +46,38 @@ namespace WombatLibrarianApi.Services
 
         public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
         {
-            return await Context.Bookshelves.FindAsync(id);
+            return await _context.Bookshelves.FindAsync(id);
         }
 
         public async Task<Bookshelf> AddBookToBookshelfAsync(Book book)
         {
-            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+            var bookItem = _context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
             if (bookItem == null)
             {
-                Context.Authors.AddRange(book.Authors);
-                Context.Categories.AddRange(book.Categories);
-                Context.Books.Add(book);
+                _context.Authors.AddRange(book.Authors);
+                _context.Categories.AddRange(book.Categories);
+                _context.Books.Add(book);
             }
-            Bookshelf bookshelf = new Bookshelf() { BookId = book.Id };
-            Context.Bookshelves.Add(bookshelf);
-            await Context.SaveChangesAsync();
+            var bookshelf = new Bookshelf() { BookId = book.Id };
+            _context.Bookshelves.Add(bookshelf);
+            await _context.SaveChangesAsync();
             return bookshelf;
-
         }
 
         public async Task<int> RemoveBookFromBookshelfById(Bookshelf bookshelf)
         {
-            Context.Bookshelves.Remove(bookshelf);
-            return await Context.SaveChangesAsync();
+            _context.Bookshelves.Remove(bookshelf);
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<object>> GetBooksFromWishlistAsync()
         {
-            var bookIds = Context.Wishlists.Select(book => book.BookId).ToList();
-            return await Context.Books
+            var bookIds = _context.Wishlists.Select(book => book.BookId).ToList();
+            return await _context.Books
                 .Where(book => bookIds.Contains(book.Id))
                 .Include(wishlistItem => wishlistItem.Authors)
                 .Include(wishlistItem => wishlistItem.Categories)
-                .Join(Context.Wishlists,
+                .Join(_context.Wishlists,
                 book => book.Id,
                 wishlist => wishlist.BookId,
                 (book, wishlist) => new
@@ -102,22 +101,22 @@ namespace WombatLibrarianApi.Services
 
         public async Task<Wishlist> GetWishlistItemByIdAsync(int id)
         {
-            return await Context.Wishlists.FindAsync(id);
+            return await _context.Wishlists.FindAsync(id);
         }
 
         public async Task<Wishlist> AddBookToWishlistAsync(Book book)
         {
-            var bookItem = Context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
+            var bookItem = _context.Books.Where(item => item.Id == book.Id).FirstOrDefault();
 
             if (bookItem == null)
             {
-                Context.Authors.AddRange(book.Authors);
-                Context.Categories.AddRange(book.Categories);
-                Context.Books.Add(book);
+                _context.Authors.AddRange(book.Authors);
+                _context.Categories.AddRange(book.Categories);
+                _context.Books.Add(book);
             }
             Wishlist wishlist = new Wishlist() { BookId = book.Id };
-            Context.Wishlists.Add(wishlist);
-            await Context.SaveChangesAsync();
+            _context.Wishlists.Add(wishlist);
+            await _context.SaveChangesAsync();
             return wishlist;
         }
     }

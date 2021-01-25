@@ -34,7 +34,7 @@ namespace WombatLibrarianApi
             });
             services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
             services.AddScoped<IBookRepository, BookRepository>();
-            services.AddDbContext<WombatBooksContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("databaseConnection")));
+            services.AddDbContext<WombatBooksContext>();
             services.AddControllers();
             services.AddSwaggerGen();
         }

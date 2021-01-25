@@ -49,25 +49,25 @@ namespace WombatLibrarianApi.Controllers
             return CreatedAtAction("GetWishlistItemById", new { id = wishlist.Id }, wishlist);
         }
 
-        // DELETE: api/Wishlists/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBookFromWishlist(int id)
-        {
-            var wishlist = await _repository.Context.Wishlists.FindAsync(id);
-            if (wishlist == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Wishlists/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> RemoveBookFromWishlist(int id)
+        //{
+        //    var wishlist = await _repository.Context.Wishlists.FindAsync(id);
+        //    if (wishlist == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _repository.Context.Wishlists.Remove(wishlist);
-            await _repository.Context.SaveChangesAsync();
+        //    _repository.Context.Wishlists.Remove(wishlist);
+        //    await _repository.Context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        private bool WishlistExists(int id)
-        {
-            return _repository.Context.Wishlists.Any(e => e.Id == id);
-        }
+        //private bool WishlistExists(int id)
+        //{
+        //    return _repository.Context.Wishlists.Any(e => e.Id == id);
+        //}
     }
 }

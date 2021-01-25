@@ -6,8 +6,6 @@ namespace WombatLibrarianApi.Services
 {
     public interface IBookRepository
     {
-        WombatBooksContext Context { get; }
-
         Task<IEnumerable<object>> GetBooksFromBookshelfAsync();
         Task<Bookshelf> GetBookshelfItemByIdAsync(int id);
         Task<Bookshelf> AddBookToBookshelfAsync(Book book);
