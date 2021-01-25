@@ -64,7 +64,7 @@ namespace WombatLibrarianApi.Services
             return bookshelf;
         }
 
-        public async Task<int> RemoveBookFromBookshelfById(Bookshelf bookshelf)
+        public async Task<int> RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf)
         {
             _context.Bookshelves.Remove(bookshelf);
             return await _context.SaveChangesAsync();
@@ -114,10 +114,16 @@ namespace WombatLibrarianApi.Services
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
             }
-            Wishlist wishlist = new Wishlist() { BookId = book.Id };
+            var wishlist = new Wishlist() { BookId = book.Id };
             _context.Wishlists.Add(wishlist);
             await _context.SaveChangesAsync();
             return wishlist;
+        }
+
+        public async Task<int> RemoveBookFromWishlistByIdAsync(Wishlist wishlist)
+        {
+            _context.Wishlists.Remove(wishlist);
+            return await _context.SaveChangesAsync();
         }
     }
 }
