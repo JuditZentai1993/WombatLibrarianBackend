@@ -59,7 +59,7 @@ namespace WombatLibrarianApi.Controllers
                 return NotFound();
             }
 
-           await _repository.RemoveBookFromBookshelfById(bookshelf);
+           await _repository.RemoveBookFromBookshelfByIdAsync(bookshelf);
 
             return NoContent();
         }
