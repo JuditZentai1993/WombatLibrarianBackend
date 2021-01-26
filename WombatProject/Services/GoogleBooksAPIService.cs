@@ -23,7 +23,7 @@ namespace WombatLibrarianApi.Services
             this._googleApiSettings = settings.Value;
         }
 
-        public async Task GetSearchResults(string searchTerm)
+        public async Task GetSearchResultsAsync(string searchTerm)
         {
             SearchResults.Clear();
             string url = $"{_googleApiSettings.GoogleBooksURL}?q={searchTerm}&maxResults=40";
@@ -34,7 +34,7 @@ namespace WombatLibrarianApi.Services
             }
         }
 
-        public async Task GetAuthorBooks(string author)
+        public async Task GetAuthorBooksAsync(string author)
         {
             AuthorBookItems.Clear();
             string url = $"{_googleApiSettings.GoogleBooksURL}?q=inauthor:{author}";
