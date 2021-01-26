@@ -51,7 +51,7 @@ namespace WombatLibrarianApi.Controllers
 
         // DELETE: api/Wishlists/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBookFromWishlist(int id)
+        public async Task<IActionResult> RemoveBookFromWishlistById(int id)
         {
             var wishlist = await _repository.GetWishlistItemByIdAsync(id);
             if (wishlist == null)

@@ -51,7 +51,7 @@ namespace WombatLibrarianApi.Controllers
 
         // DELETE: api/Bookshelves/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBookFromBookshelf(int id)
+        public async Task<IActionResult> RemoveBookFromBookshelfById(int id)
         {
             var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
             if (bookshelf == null)
