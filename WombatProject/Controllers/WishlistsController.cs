@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
@@ -14,26 +11,26 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class WishlistsController : ControllerBase
     {
-        private readonly IBookAPIService _apiService;
+        private readonly IBookRepository _repository;
 
-        public WishlistsController(IBookAPIService service)
+        public WishlistsController(IBookRepository repository)
         {
-            _apiService = service;
+            this._repository = repository;
         }
 
         // GET: api/Wishlists
         [HttpGet]
-        public async Task<IActionResult> GetWishlists()
+        public async Task<IActionResult> GetWishlistItems()
         {
-            var books = await _apiService.GetBooksFromWishlist();
+            var books = await _repository.GetBooksFromWishlistAsync();
             return Ok(books);
         }
 
         // GET: api/Wishlists/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Wishlist>> GetWishlist(int id)
+        public async Task<ActionResult<Wishlist>> GetWishlistItemById(int id)
         {
-            var wishlist = await _apiService.Context.Wishlists.FindAsync(id);
+            var wishlist = await _repository.GetWishlistItemByIdAsync(id);
 
             if (wishlist == null)
             {
@@ -43,66 +40,28 @@ namespace WombatLibrarianApi.Controllers
             return wishlist;
         }
 
-        // PUT: api/Wishlists/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWishlist(int id, Wishlist wishlist)
-        {
-            if (id != wishlist.Id)
-            {
-                return BadRequest();
-            }
-
-            _apiService.Context.Entry(wishlist).State = EntityState.Modified;
-
-            try
-            {
-                await _apiService.Context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WishlistExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Wishlists
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Wishlist>> PostWishlist(Book book)
+        public async Task<ActionResult<Wishlist>> AddItemToWishlist(Book book)
         {
-            var wishlist = await _apiService.AddBookToWishlist(book);
+            var wishlist = await _repository.AddBookToWishlistAsync(book);
 
-            return CreatedAtAction("GetWishlist", new { id = wishlist.Id }, wishlist);
+            return CreatedAtAction("GetWishlistItemById", new { id = wishlist.Id }, wishlist);
         }
 
         // DELETE: api/Wishlists/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWishlist(int id)
+        public async Task<IActionResult> RemoveBookFromWishlistById(int id)
         {
-            var wishlist = await _apiService.Context.Wishlists.FindAsync(id);
+            var wishlist = await _repository.GetWishlistItemByIdAsync(id);
             if (wishlist == null)
             {
                 return NotFound();
             }
 
-            _apiService.Context.Wishlists.Remove(wishlist);
-            await _apiService.Context.SaveChangesAsync();
+            await _repository.RemoveBookFromWishlistByIdAsync(wishlist);
 
             return NoContent();
-        }
-
-        private bool WishlistExists(int id)
-        {
-            return _apiService.Context.Wishlists.Any(e => e.Id == id);
         }
     }
 }

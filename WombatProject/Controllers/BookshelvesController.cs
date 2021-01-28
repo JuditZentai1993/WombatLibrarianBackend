@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
@@ -14,26 +11,26 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class BookshelvesController : ControllerBase
     {
-        private readonly IBookAPIService _apiService;
+        private readonly IBookRepository _repository;
 
-        public BookshelvesController(IBookAPIService service)
+        public BookshelvesController(IBookRepository repository)
         {
-            _apiService = service;
+            this._repository = repository;
         }
 
         // GET: api/Bookshelves
         [HttpGet]
-        public async Task<IActionResult> GetBookshelves()
+        public async Task<IActionResult> GetBookshelfItems()
         {
-            var books = await _apiService.GetBooksFromBookshelf();
+            var books = await _repository.GetBooksFromBookshelfAsync();
             return Ok(books);
         }
 
         // GET: api/Bookshelves/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bookshelf>> GetBookshelf(int id)
+        public async Task<ActionResult<Bookshelf>> GetBookshelfItemById(int id)
         {
-            var bookshelf = await _apiService.Context.Bookshelves.FindAsync(id);
+            var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
 
             if (bookshelf == null)
             {
@@ -43,66 +40,28 @@ namespace WombatLibrarianApi.Controllers
             return bookshelf;
         }
 
-        // PUT: api/Bookshelves/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookshelf(int id, Bookshelf bookshelf)
-        {
-            if (id != bookshelf.Id)
-            {
-                return BadRequest();
-            }
-
-            _apiService.Context.Entry(bookshelf).State = EntityState.Modified;
-
-            try
-            {
-                await _apiService.Context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookshelfExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Bookshelves
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Bookshelf>> PostBookshelf(Book book)
+        public async Task<ActionResult<Bookshelf>> AddItemToBookshelf(Book book)
         {
-            var bookshelf = await _apiService.AddBookToBookshelf(book);
+            var bookshelf = await _repository.AddBookToBookshelfAsync(book);
 
-            return CreatedAtAction("GetBookshelf", new { id = bookshelf.Id }, bookshelf);
+            return CreatedAtAction("GetBookshelfItemById", new { id = bookshelf.Id }, bookshelf);
         }
 
         // DELETE: api/Bookshelves/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBookshelf(int id)
+        public async Task<IActionResult> RemoveBookFromBookshelfById(int id)
         {
-            var bookshelf = await _apiService.Context.Bookshelves.FindAsync(id);
+            var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
             if (bookshelf == null)
             {
                 return NotFound();
             }
 
-            _apiService.Context.Bookshelves.Remove(bookshelf);
-            await _apiService.Context.SaveChangesAsync();
+           await _repository.RemoveBookFromBookshelfByIdAsync(bookshelf);
 
             return NoContent();
-        }
-
-        private bool BookshelfExists(int id)
-        {
-            return _apiService.Context.Bookshelves.Any(e => e.Id == id);
         }
     }
 }
