@@ -64,10 +64,10 @@ namespace WombatLibrarianApi.Services
             return bookshelf;
         }
 
-        public async Task<int> RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf)
+        public async Task RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf)
         {
             _context.Bookshelves.Remove(bookshelf);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<object>> GetBooksFromWishlistAsync()
@@ -120,10 +120,10 @@ namespace WombatLibrarianApi.Services
             return wishlist;
         }
 
-        public async Task<int> RemoveBookFromWishlistByIdAsync(Wishlist wishlist)
+        public async Task RemoveBookFromWishlistByIdAsync(Wishlist wishlist)
         {
             _context.Wishlists.Remove(wishlist);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }
