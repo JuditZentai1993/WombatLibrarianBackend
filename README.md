@@ -38,9 +38,9 @@ How our wishlist looks without adding any books to it:
    Frontend repository can be found here: https://github.com/Dusernajder/Wombat_librarian
 2. As this project requires using a database, for which we do not have a global server right now, you need to set up the database on your side. Do do this, open the project in your favorite IDE or editor - we recomment Visual Studio, in VS, open Tools/NuGet Package Manager/Package Manager Console, and run the following command in the console: **update-database**. With this command, you will run the migration scripts provided by our theam and set up a new database for this project.
 3. Once you have the database, you will need to set the environment variables used in this project. Follow these steps on Windows:
-      **1.** windows button + R (or search for 'run' and open the Run app)
-      **2.** Copy this to the input field and hit ok: **rundll32 sysdm.cpl,EditEnvironmentVariables**
-      **3.** variable name : ConnectionStrings__databaseConnection
-      **4.** variable value : data source=localhost; initial catalog=WombatDb; integrated security=SSPI
+   - windows button + R (or search for 'run' and open the Run app)
+   - Copy this to the input field and hit ok: **rundll32 sysdm.cpl,EditEnvironmentVariables**
+   - variable name : ConnectionStrings__databaseConnection
+   - variable value : data source=localhost; initial catalog=WombatDb; integrated security=SSPI
 3. Once the DB is all set up with the environment variables, hit "Run", or if you are familiar with the dotnet CLI, simply open the project folder in a command line tool, navigate into the WombatProjectfolder, and write **dotnet run** command
 4. The backend runs now, but you cannot really use the webpage as it is supposed to be used without the frontend. In order to start the frontend too, please check out the above linked git repository, and follow the instructions there.
