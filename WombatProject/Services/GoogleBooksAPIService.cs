@@ -14,13 +14,16 @@ namespace WombatLibrarianApi.Services
 {
     public class GoogleBooksAPIService : IBookAPIService
     {
+        private readonly IHttpClientFactory _clientFactory;
+
         protected readonly GoogleApiSettings _googleApiSettings;
         public List<Book> AuthorBookItems { get; } = new List<Book>();
         public List<Book> SearchResults { get; } = new List<Book>();
 
-        public GoogleBooksAPIService(IOptions<GoogleApiSettings> settings)
+        public GoogleBooksAPIService(IOptions<GoogleApiSettings> settings, IHttpClientFactory clientFactory)
         {
-            this._googleApiSettings = settings.Value;
+            _googleApiSettings = settings.Value;
+            _clientFactory = clientFactory;
         }
 
         public async Task GetSearchResultsAsync(string searchTerm)
@@ -47,7 +50,7 @@ namespace WombatLibrarianApi.Services
 
         private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
         {
-            var client = new HttpClient();
+            var client = _clientFactory.CreateClient();
             var uri = new Uri(url);
             var response = await client.GetAsync(uri);
             string textResult = await response.Content.ReadAsStringAsync();
