@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
+using System.Net.Http;
 
 namespace WombatLibrarianApi
 {
@@ -36,6 +37,7 @@ namespace WombatLibrarianApi
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddDbContext<WombatBooksContext>();
             services.AddControllers();
+            services.AddScoped<HttpClient>();
             services.AddSwaggerGen();
         }
 
