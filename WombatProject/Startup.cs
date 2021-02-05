@@ -36,6 +36,7 @@ namespace WombatLibrarianApi
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddDbContext<WombatBooksContext>();
             services.AddControllers();
+            services.AddHttpClient();
             services.AddSwaggerGen();
         }
 
