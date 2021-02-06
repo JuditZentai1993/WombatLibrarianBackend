@@ -18,30 +18,38 @@ namespace WombatLibrarianApi.Services
         public async Task<IEnumerable<object>> GetBooksFromBookshelfAsync()
         {
             var bookIds = _context.Bookshelves.Select(book => book.BookId).ToList();
+
             return await _context.Books
-                .Where(book => bookIds.Contains(book.Id))
-                .Include(bookShelfItem => bookShelfItem.Authors)
-                .Include(bookShelfItem => bookShelfItem.Categories)
-                .Join(_context.Bookshelves,
-                book => book.Id,
-                bookshelf => bookshelf.BookId,
+               .Where(book => bookIds.Contains(book.Id))
+               .Include(bookShelfItem => bookShelfItem.Authors)
+               .Include(bookShelfItem => bookShelfItem.Categories)
+               .Join(_context.Bookshelves,
+               book => book.Id,
+               bookshelf => bookshelf.BookId
+               ,
                 (book, bookshelf) => new
                 {
                     Id = book.Id,
-                    Title = book.Title,
-                    Subtitle = book.Subtitle,
-                    Thumbnail = book.Thumbnail,
-                    Description = book.Description,
-                    PageCount = book.PageCount,
-                    Rating = book.Rating,
-                    RatingCount = book.RatingCount,
-                    Language = book.Language,
-                    MaturityRating = book.MaturityRating,
-                    Published = book.Published,
-                    Publisher = book.Publisher,
-                    BookshelfId = bookshelf.Id
-                })
-                .ToListAsync();
+                    BookshelfId = bookshelf.Id,
+                    VolumeInfo = new {
+                        Title = book.Title,
+                        Subtitle = book.Subtitle,
+                        ImageLinks  = new
+                        {
+                            Thumbnail = book.Thumbnail
+                        },
+                        Description = book.Description,
+                        PageCount = book.PageCount,
+                        AverageRating = book.Rating,
+                        RatingsCount = book.RatingCount,
+                        Language = book.Language,
+                        MaturityRating = book.MaturityRating,
+                        PublishedDate = book.Published,
+                        Publisher = book.Publisher
+                    }
+                }
+                )
+                 .ToListAsync();
         }
 
         public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
@@ -58,7 +66,7 @@ namespace WombatLibrarianApi.Services
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
             }
-            var bookshelf = new Bookshelf() { BookId = book.Id };
+            var bookshelf = new Bookshelf() { BookId = book.Id, book = book };
             _context.Bookshelves.Add(bookshelf);
             await _context.SaveChangesAsync();
             return bookshelf;
@@ -83,18 +91,24 @@ namespace WombatLibrarianApi.Services
                 (book, wishlist) => new
                 {
                     Id = book.Id,
-                    Title = book.Title,
-                    Subtitle = book.Subtitle,
-                    Thumbnail = book.Thumbnail,
-                    Description = book.Description,
-                    PageCount = book.PageCount,
-                    Rating = book.Rating,
-                    RatingCount = book.RatingCount,
-                    Language = book.Language,
-                    MaturityRating = book.MaturityRating,
-                    Published = book.Published,
-                    Publisher = book.Publisher,
-                    WishlistId = wishlist.Id
+                    WishlistId = wishlist.Id,
+                    VolumeInfo = new
+                    {
+                        Title = book.Title,
+                        Subtitle = book.Subtitle,
+                        ImageLinks = new
+                        {
+                            Thumbnail = book.Thumbnail
+                        },
+                        Description = book.Description,
+                        PageCount = book.PageCount,
+                        AverageRating = book.Rating,
+                        RatingsCount = book.RatingCount,
+                        Language = book.Language,
+                        MaturityRating = book.MaturityRating,
+                        PublishedDate = book.Published,
+                        Publisher = book.Publisher
+                    }
                 })
                 .ToListAsync();
         }
@@ -114,7 +128,7 @@ namespace WombatLibrarianApi.Services
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
             }
-            var wishlist = new Wishlist() { BookId = book.Id };
+            var wishlist = new Wishlist() { BookId = book.Id, book = book };
             _context.Wishlists.Add(wishlist);
             await _context.SaveChangesAsync();
             return wishlist;
