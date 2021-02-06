@@ -19,10 +19,9 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Search/<searchphrase>
         [HttpGet("{searchTerm}")]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBookItems(string searchTerm)
+        public async Task<ActionResult<IEnumerable<BookItem>>> GetBookItems(string searchTerm)
         {
-            await _apiService.GetSearchResultsAsync(searchTerm);
-            return _apiService.SearchResults;
+            return Ok(await _apiService.GetSearchResultsAsync(searchTerm));
         }
     }
 }
