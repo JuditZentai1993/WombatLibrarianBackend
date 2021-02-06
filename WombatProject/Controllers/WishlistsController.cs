@@ -15,7 +15,7 @@ namespace WombatLibrarianApi.Controllers
 
         public WishlistsController(IBookRepository repository)
         {
-            this._repository = repository;
+            _repository = repository;
         }
 
         // GET: api/Wishlists
