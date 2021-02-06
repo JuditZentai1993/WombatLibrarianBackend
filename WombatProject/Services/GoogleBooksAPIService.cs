@@ -14,90 +14,38 @@ namespace WombatLibrarianApi.Services
 {
     public class GoogleBooksAPIService : IBookAPIService
     {
+        private readonly IHttpClientFactory _clientFactory;
+
         protected readonly GoogleApiSettings _googleApiSettings;
-        private readonly HttpClient _httpClient;
 
-        public List<Book> AuthorBookItems { get; } = new List<Book>();
-        public List<Book> SearchResults { get; } = new List<Book>();
-
-        public GoogleBooksAPIService(
-            IOptions<GoogleApiSettings> settings, 
-            HttpClient httpClient)
+        public GoogleBooksAPIService(IOptions<GoogleApiSettings> settings, IHttpClientFactory clientFactory)
         {
-            this._googleApiSettings = settings.Value;
-            this._httpClient = httpClient;
+            _googleApiSettings = settings.Value;
+            _clientFactory = clientFactory;
         }
 
-        public async Task GetSearchResultsAsync(string searchTerm)
+        public async Task<IList<BookItem>> GetSearchResultsAsync(string searchTerm)
         {
-            SearchResults.Clear();
             string url = $"{_googleApiSettings.GoogleBooksURL}?q={searchTerm}&maxResults=40";
-            IList<JToken> tokens = await GetBookItemsAsJToken(url);
-            foreach (JToken token in tokens)
-            {
-                SearchResults.Add(ParseJsonToken(token));
-            }
+            return await SerializeResultsFromGoogleBooksApiAsync(url);
         }
 
-        public async Task GetAuthorBooksAsync(string author)
+        public async Task<IList<BookItem>> GetAuthorBooksAsync(string author)
         {
-            AuthorBookItems.Clear();
             string url = $"{_googleApiSettings.GoogleBooksURL}?q=inauthor:{author}";
-            IList<JToken> tokens = await GetBookItemsAsJToken(url);
-            foreach (JToken token in tokens)
-            {
-                AuthorBookItems.Add(ParseJsonToken(token));
-            }
+            return await SerializeResultsFromGoogleBooksApiAsync(url);
         }
 
-        private async Task<IList<JToken>> GetBookItemsAsJToken(string url)
+        public async Task<IList<BookItem>> SerializeResultsFromGoogleBooksApiAsync (string url)
         {
+            var client = _clientFactory.CreateClient();
             var uri = new Uri(url);
-            var response = await _httpClient.GetAsync(uri);
+            var response = await client.GetAsync(uri);
             string textResult = await response.Content.ReadAsStringAsync();
-            JObject bookSearch = JObject.Parse(textResult);
-            IList<JToken> tokens = new List<JToken>();
-            try
-            {
-                tokens = bookSearch["items"].Children().ToList();
-            }
-            catch (NullReferenceException error)
-            {
-                Console.WriteLine(error);
-            }
-            return tokens;
+            GoogleBookApiSearchResponse myDeserializedClass = JsonConvert.DeserializeObject
+                <GoogleBookApiSearchResponse>(textResult);
 
-        }
-
-        private Book ParseJsonToken(JToken jToken)
-        {
-
-            JObject volumeInfo = (JObject)jToken["volumeInfo"];
-
-            Book book = new Book();
-            book.Id = jToken["id"]?.ToString();
-            book.Title = volumeInfo["title"]?.ToString();
-            book.Subtitle = volumeInfo["subtitle"]?.ToString();
-            book.Thumbnail = volumeInfo["imageLinks"]?["thumbnail"]?.ToString();
-            if (volumeInfo["authors"] != null)
-            {
-                book.Authors = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["authors"]).ToString())
-                    .Select(a => new Author { Name = a }).ToList();
-            }
-            book.Description = volumeInfo["description"]?.ToString();
-            book.PageCount = volumeInfo["pageCount"] == null ? 0 : int.Parse(volumeInfo["pageCount"].ToString());
-            book.Rating = volumeInfo["averageRating"] == null ? 0 : double.Parse(volumeInfo["averageRating"].ToString());
-            book.RatingCount = volumeInfo["ratingsCount"] == null ? 0 : double.Parse(volumeInfo["ratingsCount"].ToString());
-            book.Language = volumeInfo["language"]?.ToString();
-            if (volumeInfo["categories"] != null)
-            {
-                book.Categories = JsonConvert.DeserializeObject<IEnumerable<string>>((volumeInfo["categories"]).ToString())
-                    .Select(c => new Category { Name = c }).ToList();
-            }
-            book.MaturityRating = volumeInfo["maturityRating"]?.ToString();
-            book.Published = volumeInfo["publishedDate"]?.ToString();
-            book.Publisher = volumeInfo["publisher"]?.ToString();
-            return book;
+            return myDeserializedClass.items;
         }
     }
 }

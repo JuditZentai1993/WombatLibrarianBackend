@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
@@ -15,7 +16,7 @@ namespace WombatLibrarianApi.Controllers
 
         public BookshelvesController(IBookRepository repository)
         {
-            this._repository = repository;
+            _repository = repository;
         }
 
         // GET: api/Bookshelves

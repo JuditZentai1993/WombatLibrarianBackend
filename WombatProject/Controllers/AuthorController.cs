@@ -19,10 +19,9 @@ namespace WombatLibrarianApi.Controllers
 
         // GET: api/Author/<authorname>
         [HttpGet("{author}")]
-        public async Task<ActionResult<IEnumerable<Book>>> GetAuthorBookItems(string author)
+        public async Task<ActionResult<IEnumerable<BookItem>>> GetAuthorBookItems(string author)
         {
-            await _apiService.GetAuthorBooksAsync(author);
-            return _apiService.AuthorBookItems;
+            return Ok(await _apiService.GetAuthorBooksAsync(author));
         }
     }
 }
