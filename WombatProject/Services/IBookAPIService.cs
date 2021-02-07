@@ -6,9 +6,8 @@ namespace WombatLibrarianApi.Services
 {
     public interface IBookAPIService
     {
-        List<Book> SearchResults { get; }
-        List<Book> AuthorBookItems { get; }
-        Task GetSearchResultsAsync(string searchTerm);
-        Task GetAuthorBooksAsync(string author);
+        Task<IList<BookItem>> GetSearchResultsAsync(string searchTerm);
+        Task<IList<BookItem>> GetAuthorBooksAsync(string author);
+        Task<IList<BookItem>> SerializeResultsFromGoogleBooksApiAsync(string url);
     }
 }

@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 
@@ -15,7 +13,7 @@ namespace WombatLibrarianApi.Controllers
 
         public WishlistsController(IBookRepository repository)
         {
-            this._repository = repository;
+            _repository = repository;
         }
 
         // GET: api/Wishlists
