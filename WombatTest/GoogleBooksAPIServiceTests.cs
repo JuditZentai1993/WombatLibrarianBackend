@@ -13,13 +13,14 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
 
 namespace WombatTest
 {
-    //[TestFixture]
-    public class GoogleBooksAPIServiceTest
+    [TestFixture]
+    public class GoogleBooksAPIServiceTests
     {
         private IOptions<GoogleApiSettings> _settings;
 
@@ -151,7 +152,6 @@ namespace WombatTest
             var result = await service.SerializeResultsFromGoogleBooksApiAsync("http://test.com");
             result.Count().Should().BePositive();
         }
-
 
     }
 }
