@@ -3,17 +3,11 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
 
