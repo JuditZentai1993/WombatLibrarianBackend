@@ -8,10 +8,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
 
-namespace WombatTest
+namespace WombatLibrarianApi.Services.Tests
 {
     [TestFixture]
     public class GoogleBooksAPIServiceTests
