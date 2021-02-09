@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using WombatLibrarianApi.Services;
 using Moq;
-using WombatTest;
 using WombatLibrarianApi.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
