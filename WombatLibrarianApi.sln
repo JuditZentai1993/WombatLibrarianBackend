@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WombatLibrarianApi/WombatProject", "WombatProject/WombatLibrarianApi.csproj", "{1B188E2D-A987-431E-9F1D-D372B77F215A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WombatLibrarianApi", "WombatProject\WombatLibrarianApi.csproj", "{1B188E2D-A987-431E-9F1D-D372B77F215A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WombatTest", "WombatTest\WombatTest.csproj", "{5E4FF696-A577-4D24-AAFF-B88DD5B491CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WombatTest", "WombatTest\WombatTest.csproj", "{5E4FF696-A577-4D24-AAFF-B88DD5B491CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

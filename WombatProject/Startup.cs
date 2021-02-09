@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
+using System.Net.Http;
 
 namespace WombatLibrarianApi
 {
