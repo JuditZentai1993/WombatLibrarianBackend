@@ -3,7 +3,7 @@
 This is the backend (built with ASP.NET Core) part of our web-application made for book lovers, where people can browse books, keep track of what books they have and what books they want to read. The aim of the site to create a community where the users can trade, rate, and discuss books.
 To give you an idea, the aim is to make it similar to https://www.goodreads.com/, or the hungarian moly.hu (https://hu.wikipedia.org/wiki/Moly.hu)
 
-Frontend repository can be found here: https://github.com/Dusernajder/Wombat_librarian
+Frontend repository can be found here: https://github.com/JuditZentai1993/WombatLibrarianFrontend
 
 ## Project Status
 
@@ -35,7 +35,7 @@ How our wishlist looks without adding any books to it:
 ## Installation and Setup Instructions
 
 1. Clone this repository. You also have to clone the frontend repository and follow the instruction in the readme file you can find there.
-   Frontend repository can be found here: https://github.com/Dusernajder/Wombat_librarian
+   Frontend repository can be found here: https://github.com/JuditZentai1993/WombatLibrarianFrontend
 2. As this project requires using a database, for which we do not have a global server right now, you need to set up the database on your side. To do this, open the project in your favorite IDE or editor - we recommend Visual Studio; in VS, open Tools/NuGet Package Manager/Package Manager Console, and run the following command in the console: **update-database**. With this command, you will run the migration scripts provided by our team and set up a new database for this project.
 3. Once you have the database, you will need to set the environment variables used in this project. Follow these steps on Windows:
    - windows button + R (or search for 'run' and open the Run app)
