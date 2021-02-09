@@ -38,7 +38,6 @@ namespace WombatLibrarianApi.Services
             var client = _clientFactory.CreateClient();
             var uri = new Uri(url);
             var response = await client.SendAsync(new HttpRequestMessage { RequestUri = uri, Method = HttpMethod.Get });
-            //var response = await client.GetAsync(uri);
             string textResult = await response.Content.ReadAsStringAsync();
             GoogleBookApiSearchResponse myDeserializedClass = JsonConvert.DeserializeObject
                 <GoogleBookApiSearchResponse>(textResult);
