@@ -7,7 +7,7 @@ Frontend repository can be found here: https://github.com/JuditZentai1993/Wombat
 
 ## Project Status
 
-This project is currently in development. The user can add books to his/her bookshelf and wishlist, which is stored on the server side in a database with the help of Entity Framework. The current sprint's scope is to implement registration/login on the website, trach individual bookshelves and wishlists per user.
+This project is currently in development. The user can add books to his/her bookshelf and wishlist, which is stored on the server side in a database with the help of Entity Framework. The current sprint's scope is to implement registration/login on the website, track individual bookshelves and wishlists per user.
 
 Further tasks for subsequent sprints: develop the community side of the webpage, make following people possible, add rating and comment section to book, create a forum as part of the web application.
 
