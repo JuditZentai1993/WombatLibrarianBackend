@@ -17,7 +17,7 @@ namespace WombatLibrarianApi.Models
             _configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
-            => optionsBuilder.UseSqlServer(_configuration.GetConnectionString("databaseConnection"));
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+        //    => optionsBuilder.UseSqlServer(_configuration.GetConnectionString("databaseConnection"));
     }
 }
