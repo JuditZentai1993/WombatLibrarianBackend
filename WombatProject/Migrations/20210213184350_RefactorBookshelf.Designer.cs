@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Migrations
 {
     [DbContext(typeof(WombatBooksContext))]
-    partial class WombatBooksContextModelSnapshot : ModelSnapshot
+    [Migration("20210213184350_RefactorBookshelf")]
+    partial class RefactorBookshelf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
