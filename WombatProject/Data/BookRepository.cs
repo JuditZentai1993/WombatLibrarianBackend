@@ -17,39 +17,36 @@ namespace WombatLibrarianApi.Services
 
         public async Task<IEnumerable<object>> GetBooksFromBookshelfAsync()
         {
-            var bookIds = _context.Bookshelves.Select(book => book.BookId).ToList();
-
-            return await _context.Books
-               .Where(book => bookIds.Contains(book.Id))
-               .Include(bookShelfItem => bookShelfItem.Authors)
-               .Include(bookShelfItem => bookShelfItem.Categories)
-               .Join(_context.Bookshelves,
-               book => book.Id,
-               bookshelf => bookshelf.BookId
-               ,
-                (book, bookshelf) => new
-                {
-                    Id = book.Id,
-                    BookshelfId = bookshelf.Id,
-                    VolumeInfo = new {
-                        Title = book.Title,
-                        Subtitle = book.Subtitle,
-                        ImageLinks  = new
+            return await _context.Bookshelves.Include(bookshelf => bookshelf.Books)
+                .Select( bookshelf => bookshelf.Books)
+                .Select(book => book
+                .Select(
+                    book => new
+                    {
+                        Id = book.Id,
+                        BookshelfId = book.Id,
+                        VolumeInfo = new
                         {
-                            Thumbnail = book.Thumbnail
-                        },
-                        Description = book.Description,
-                        PageCount = book.PageCount,
-                        AverageRating = book.Rating,
-                        RatingsCount = book.RatingCount,
-                        Language = book.Language,
-                        MaturityRating = book.MaturityRating,
-                        PublishedDate = book.Published,
-                        Publisher = book.Publisher
-                    }
-                }
+                            Title = book.Title,
+                            Subtitle = book.Subtitle,
+                            ImageLinks = new
+                            {
+                                Thumbnail = book.Thumbnail
+                            },
+                            Description = book.Description,
+                            PageCount = book.PageCount,
+                            AverageRating = book.Rating,
+                            RatingsCount = book.RatingCount,
+                            Language = book.Language,
+                            MaturityRating = book.MaturityRating,
+                            PublishedDate = book.Published,
+                            Publisher = book.Publisher,
+                            Authors = book.Authors,
+                            Categories = book.Categories
+                        }
+                    })
                 )
-                 .ToListAsync();
+                .ToListAsync();
         }
 
         public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
@@ -66,10 +63,25 @@ namespace WombatLibrarianApi.Services
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
             }
-            var bookshelf = new Bookshelf() { BookId = book.Id, book = book };
-            _context.Bookshelves.Add(bookshelf);
+
+            //var bookshelf = new Bookshelf();
+            if (!_context.Bookshelves.Any())
+            {
+                var bookshelf = new Bookshelf() { Books = new List<Book>() };
+                bookshelf.Books.Add(book);
+                _context.Bookshelves.Add(bookshelf);
+            }
+            else
+            {
+                var bookshelf = _context.Bookshelves.Include(bookshelf => bookshelf.Books).ToList();
+                bookshelf.FirstOrDefault()
+                    .Books.Add(book);
+            }
+
+            //var bookshelf = new Bookshelf() { BookId = book.Id, book = book };
+            //_context.Bookshelves.Add(bookshelf);
             await _context.SaveChangesAsync();
-            return bookshelf;
+            return _context.Bookshelves.FirstOrDefault();
         }
 
         public async Task RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf)
