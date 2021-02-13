@@ -5,6 +5,7 @@ namespace WombatLibrarianApi.Models
 {
     public class Book
     {
+        [Key]
         [Required]
         public string Id { get; set; }
         [StringLength(1000)]
