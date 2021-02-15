@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
@@ -21,7 +22,7 @@ namespace WombatLibrarianApi.Controllers
         public async Task<IActionResult> GetBookshelfItems()
         {
             var books = await _repository.GetBooksFromBookshelfAsync();
-            return Ok(books);
+            return Ok(books.FirstOrDefault());
         }
 
         // GET: api/Bookshelves/5
@@ -48,16 +49,16 @@ namespace WombatLibrarianApi.Controllers
         }
 
         // DELETE: api/Bookshelves/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBookFromBookshelfById(int id)
+        [HttpDelete("{bookshelfid}/{bookid}")]
+        public async Task<IActionResult> RemoveBookFromBookshelfById(int bookshelfid, string bookid)
         {
-            var bookshelf = await _repository.GetBookshelfItemByIdAsync(id);
+            var bookshelf = await _repository.GetBookshelfItemByIdAsync(bookshelfid);
             if (bookshelf == null)
             {
                 return NotFound();
             }
 
-           await _repository.RemoveBookFromBookshelfByIdAsync(bookshelf);
+           await _repository.RemoveBookFromBookshelfByIdAsync(bookid);
 
             return NoContent();
         }
