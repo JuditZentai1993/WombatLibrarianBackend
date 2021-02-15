@@ -24,7 +24,7 @@ namespace WombatLibrarianApi.Services
                     book => new
                     {
                         Id = book.Id,
-                        BookshelfId = book.Id,
+                        BookshelfId = 1,
                         VolumeInfo = new
                         {
                             Title = book.Title,
@@ -84,9 +84,12 @@ namespace WombatLibrarianApi.Services
             return _context.Bookshelves.FirstOrDefault();
         }
 
-        public async Task RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf)
+        public async Task RemoveBookFromBookshelfByIdAsync(string bookid)
         {
-            _context.Bookshelves.Remove(bookshelf);
+            _context.Bookshelves
+                .Include(bookshelf => bookshelf.Books)
+                .FirstOrDefault()
+                .Books.RemoveAll(book => book.Id == bookid);
             await _context.SaveChangesAsync();
         }
 

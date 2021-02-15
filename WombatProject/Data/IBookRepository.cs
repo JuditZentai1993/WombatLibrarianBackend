@@ -9,7 +9,7 @@ namespace WombatLibrarianApi.Services
         Task<IEnumerable<object>> GetBooksFromBookshelfAsync();
         Task<Bookshelf> GetBookshelfItemByIdAsync(int id);
         Task<Bookshelf> AddBookToBookshelfAsync(Book book);
-        Task RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf);
+        Task RemoveBookFromBookshelfByIdAsync(string bookid);
         Task<IEnumerable<object>> GetBooksFromWishlistAsync();
         Task<Wishlist> GetWishlistItemByIdAsync(int id);
         Task<Wishlist> AddBookToWishlistAsync(Book book);
