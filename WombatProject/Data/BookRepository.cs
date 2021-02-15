@@ -95,36 +95,35 @@ namespace WombatLibrarianApi.Services
 
         public async Task<IEnumerable<object>> GetBooksFromWishlistAsync()
         {
-            var bookIds = _context.Wishlists.Select(book => book.BookId).ToList();
-            return await _context.Books
-                .Where(book => bookIds.Contains(book.Id))
-                .Include(wishlistItem => wishlistItem.Authors)
-                .Include(wishlistItem => wishlistItem.Categories)
-                .Join(_context.Wishlists,
-                book => book.Id,
-                wishlist => wishlist.BookId,
-                (book, wishlist) => new
-                {
-                    Id = book.Id,
-                    WishlistId = wishlist.Id,
-                    VolumeInfo = new
+            return await _context.Wishlists.Include(wishlist => wishlist.Books)
+                .Select(wishlist => wishlist.Books)
+                .Select(book => book
+                .Select(
+                    book => new
                     {
-                        Title = book.Title,
-                        Subtitle = book.Subtitle,
-                        ImageLinks = new
+                        Id = book.Id,
+                        WishlistId = 1,
+                        VolumeInfo = new
                         {
-                            Thumbnail = book.Thumbnail
-                        },
-                        Description = book.Description,
-                        PageCount = book.PageCount,
-                        AverageRating = book.Rating,
-                        RatingsCount = book.RatingCount,
-                        Language = book.Language,
-                        MaturityRating = book.MaturityRating,
-                        PublishedDate = book.Published,
-                        Publisher = book.Publisher
-                    }
-                })
+                            Title = book.Title,
+                            Subtitle = book.Subtitle,
+                            ImageLinks = new
+                            {
+                                Thumbnail = book.Thumbnail
+                            },
+                            Description = book.Description,
+                            PageCount = book.PageCount,
+                            AverageRating = book.Rating,
+                            RatingsCount = book.RatingCount,
+                            Language = book.Language,
+                            MaturityRating = book.MaturityRating,
+                            PublishedDate = book.Published,
+                            Publisher = book.Publisher,
+                            Authors = book.Authors,
+                            Categories = book.Categories
+                        }
+                    })
+                )
                 .ToListAsync();
         }
 
@@ -143,15 +142,31 @@ namespace WombatLibrarianApi.Services
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
             }
-            var wishlist = new Wishlist() { BookId = book.Id, book = book };
-            _context.Wishlists.Add(wishlist);
+            //var wishlist = new Wishlist()
+            if (!_context.Wishlists.Any())
+            {
+                var wishlist = new Wishlist() { Books = new List<Book>() };
+                wishlist.Books.Add(book);
+                _context.Wishlists.Add(wishlist);
+            }
+            else
+            {
+                var wishlist = _context.Wishlists.Include(wishlist => wishlist.Books).ToList();
+                wishlist.FirstOrDefault()
+                    .Books.Add(book);
+            }
+            //var wishlist = new Wishlist() { BookId = book.Id, book = book };
+            //_context.Wishlists.Add(wishlist);
             await _context.SaveChangesAsync();
-            return wishlist;
+            return _context.Wishlists.FirstOrDefault();
         }
 
-        public async Task RemoveBookFromWishlistByIdAsync(Wishlist wishlist)
+        public async Task RemoveBookFromWishlistByIdAsync(string bookid)
         {
-            _context.Wishlists.Remove(wishlist);
+            _context.Wishlists
+                .Include(wishlist => wishlist.Books)
+                .FirstOrDefault()
+                .Books.RemoveAll(book => book.Id == bookid);
             await _context.SaveChangesAsync();
         }
     }
