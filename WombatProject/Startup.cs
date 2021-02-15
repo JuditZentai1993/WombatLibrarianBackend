@@ -7,7 +7,6 @@ using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
 using System.Net.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace WombatLibrarianApi
 {
@@ -35,8 +34,9 @@ namespace WombatLibrarianApi
             });
             services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
             services.AddScoped<IBookRepository, BookRepository>();
-            services.AddDbContext<WombatBooksContext>(opts => opts.UseInMemoryDatabase("test"));
-            services.AddControllers();
+            services.AddDbContext<WombatBooksContext>();
+            services.AddControllers().AddNewtonsoftJson(options => 
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddHttpClient();
             services.AddSwaggerGen();
         }
