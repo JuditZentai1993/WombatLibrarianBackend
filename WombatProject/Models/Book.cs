@@ -25,5 +25,7 @@ namespace WombatLibrarianApi.Models
     
         public List<Author> Authors { get; set; }
         public List<Category> Categories { get; set; }
+        public List<Bookshelf> Bookshelves { get; set; }
+        public List<Wishlist> Wishlists { get; set; }
     }
 }
