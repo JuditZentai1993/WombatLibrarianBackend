@@ -24,7 +24,7 @@ namespace WombatLibrarianApi.Services
                     book => new
                     {
                         Id = book.Id,
-                        BookshelfId = 1,
+                        BookshelfId = book.Bookshelves.FirstOrDefault().Id,
                         VolumeInfo = new
                         {
                             Title = book.Title,
@@ -62,20 +62,22 @@ namespace WombatLibrarianApi.Services
                 _context.Authors.AddRange(book.Authors);
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                bookItem = book;
             }
 
             //var bookshelf = new Bookshelf();
             if (!_context.Bookshelves.Any())
             {
                 var bookshelf = new Bookshelf() { Books = new List<Book>() };
-                bookshelf.Books.Add(book);
+                bookshelf.Books.Add(bookItem);
                 _context.Bookshelves.Add(bookshelf);
             }
             else
             {
                 var bookshelf = _context.Bookshelves.Include(bookshelf => bookshelf.Books).ToList();
                 bookshelf.FirstOrDefault()
-                    .Books.Add(book);
+                    .Books.Add(bookItem);
             }
 
             //var bookshelf = new Bookshelf() { BookId = book.Id, book = book };
@@ -102,7 +104,7 @@ namespace WombatLibrarianApi.Services
                     book => new
                     {
                         Id = book.Id,
-                        WishlistId = 1,
+                        WishlistId = book.Wishlists.FirstOrDefault().Id,
                         VolumeInfo = new
                         {
                             Title = book.Title,
@@ -141,19 +143,21 @@ namespace WombatLibrarianApi.Services
                 _context.Authors.AddRange(book.Authors);
                 _context.Categories.AddRange(book.Categories);
                 _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                bookItem = book;
             }
             //var wishlist = new Wishlist()
             if (!_context.Wishlists.Any())
             {
                 var wishlist = new Wishlist() { Books = new List<Book>() };
-                wishlist.Books.Add(book);
+                wishlist.Books.Add(bookItem);
                 _context.Wishlists.Add(wishlist);
             }
             else
             {
                 var wishlist = _context.Wishlists.Include(wishlist => wishlist.Books).ToList();
                 wishlist.FirstOrDefault()
-                    .Books.Add(book);
+                    .Books.Add(bookItem);
             }
             //var wishlist = new Wishlist() { BookId = book.Id, book = book };
             //_context.Wishlists.Add(wishlist);
