@@ -45,7 +45,7 @@ namespace WombatLibrarianApi.Controllers
         {
             var bookshelf = await _repository.AddBookToBookshelfAsync(book);
 
-            return CreatedAtAction("GetBookshelfItemById", new { id = bookshelf.Id }, bookshelf);
+            return Ok(bookshelf);
         }
 
         // DELETE: api/Bookshelves/5

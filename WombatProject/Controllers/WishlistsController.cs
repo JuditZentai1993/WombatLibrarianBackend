@@ -45,7 +45,7 @@ namespace WombatLibrarianApi.Controllers
         {
             var wishlist = await _repository.AddBookToWishlistAsync(book);
 
-            return CreatedAtAction("GetWishlistItemById", new { id = wishlist.Id }, wishlist);
+            return Ok(wishlist);
         }
 
         // DELETE: api/Wishlists/5
