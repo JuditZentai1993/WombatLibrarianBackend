@@ -5,6 +5,7 @@ namespace WombatLibrarianApi.Models
 {
     public class Book
     {
+        [Key]
         [Required]
         public string Id { get; set; }
         [StringLength(1000)]
@@ -24,5 +25,7 @@ namespace WombatLibrarianApi.Models
     
         public List<Author> Authors { get; set; }
         public List<Category> Categories { get; set; }
+        public List<Bookshelf> Bookshelves { get; set; }
+        public List<Wishlist> Wishlists { get; set; }
     }
 }

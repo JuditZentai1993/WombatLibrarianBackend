@@ -2,51 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WombatLibrarianApi.Models;
 
 namespace WombatLibrarianApi.Migrations
 {
     [DbContext(typeof(WombatBooksContext))]
-    partial class WombatBooksContextModelSnapshot : ModelSnapshot
+    [Migration("20210213184350_RefactorBookshelf")]
+    partial class RefactorBookshelf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
-
-            modelBuilder.Entity("BookBookshelf", b =>
-                {
-                    b.Property<string>("BooksId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("BookshelvesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksId", "BookshelvesId");
-
-                    b.HasIndex("BookshelvesId");
-
-                    b.ToTable("BookBookshelf");
-                });
-
-            modelBuilder.Entity("BookWishlist", b =>
-                {
-                    b.Property<string>("BooksId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("WishlistsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksId", "WishlistsId");
-
-                    b.HasIndex("WishlistsId");
-
-                    b.ToTable("BookWishlist");
-                });
 
             modelBuilder.Entity("WombatLibrarianApi.Models.Author", b =>
                 {
@@ -122,6 +94,10 @@ namespace WombatLibrarianApi.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("BookId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Bookshelves");
@@ -155,39 +131,13 @@ namespace WombatLibrarianApi.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("BookId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Wishlists");
-                });
-
-            modelBuilder.Entity("BookBookshelf", b =>
-                {
-                    b.HasOne("WombatLibrarianApi.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WombatLibrarianApi.Models.Bookshelf", null)
-                        .WithMany()
-                        .HasForeignKey("BookshelvesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BookWishlist", b =>
-                {
-                    b.HasOne("WombatLibrarianApi.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WombatLibrarianApi.Models.Wishlist", null)
-                        .WithMany()
-                        .HasForeignKey("WishlistsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WombatLibrarianApi.Models.Author", b =>

@@ -7,6 +7,7 @@ using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
 using WombatLibrarianApi.Settings;
 using System.Net.Http;
+using WombatLibrarianApi.Mappings;
 
 namespace WombatLibrarianApi
 {
@@ -35,9 +36,14 @@ namespace WombatLibrarianApi
             services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddDbContext<WombatBooksContext>();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options => 
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddHttpClient();
             services.AddSwaggerGen();
+            services.AddAutoMapper(opt =>
+            {
+                opt.AddProfile(typeof(BookProfile));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

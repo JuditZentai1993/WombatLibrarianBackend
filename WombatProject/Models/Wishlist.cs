@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WombatLibrarianApi.Models
 {
@@ -6,9 +7,7 @@ namespace WombatLibrarianApi.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string BookId { get; set; }
 
-        public Book book;
+        public List<Book> Books { get; set; }
     }
 }

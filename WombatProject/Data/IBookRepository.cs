@@ -6,13 +6,13 @@ namespace WombatLibrarianApi.Services
 {
     public interface IBookRepository
     {
-        Task<IEnumerable<object>> GetBooksFromBookshelfAsync();
+        Task<IEnumerable<Book>> GetBooksFromBookshelfAsync();
         Task<Bookshelf> GetBookshelfItemByIdAsync(int id);
         Task<Bookshelf> AddBookToBookshelfAsync(Book book);
-        Task RemoveBookFromBookshelfByIdAsync(Bookshelf bookshelf);
-        Task<IEnumerable<object>> GetBooksFromWishlistAsync();
+        Task RemoveBookFromBookshelfByIdAsync(string bookid);
+        Task<IEnumerable<Book>> GetBooksFromWishlistAsync();
         Task<Wishlist> GetWishlistItemByIdAsync(int id);
         Task<Wishlist> AddBookToWishlistAsync(Book book);
-        Task RemoveBookFromWishlistByIdAsync(Wishlist wishlist);
+        Task RemoveBookFromWishlistByIdAsync(string bookid);
     }
 }
