@@ -10,6 +10,9 @@ using Moq;
 using WombatLibrarianApi.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using WombatLibrarianApi.Mappings;
+using AutoMapper;
 
 namespace WombatLibrarianApi.Controllers.Tests
 {
@@ -17,6 +20,7 @@ namespace WombatLibrarianApi.Controllers.Tests
     public class SearchControllerTests
     {
         private Mock<IBookAPIService> _bookAPIService;
+        private IMapper _mapper;
 
         private IList<BookItem> GetTestBookItemList()
         {
@@ -34,6 +38,19 @@ namespace WombatLibrarianApi.Controllers.Tests
             return books;
         }
 
+        [SetUp]
+        public void Setup()
+        {
+            var servicecollection = new ServiceCollection();
+
+            servicecollection.AddAutoMapper(opt =>
+            {
+                opt.AddProfile(typeof(BookProfile));
+            });
+            var serviceProvider = servicecollection.BuildServiceProvider();
+            _mapper = serviceProvider.GetService<IMapper>();
+        }
+
         [Test]
         public async Task GetBookItems_EnterSearchTerm_ShouldReturnListOfBookItems()
         {
@@ -41,14 +58,14 @@ namespace WombatLibrarianApi.Controllers.Tests
             var searchTerm = "Test";
             _bookAPIService.Setup(service => service.GetSearchResultsAsync(searchTerm))
                 .ReturnsAsync(GetTestBookItemList());
-            var searchController = new SearchController(_bookAPIService.Object);
+            var searchController = new SearchController(_bookAPIService.Object, _mapper);
 
             var result = await searchController.GetBookItems(searchTerm);
 
             var okResult = result.Result.Should().BeOfType<OkObjectResult>();
-            var returnValue = result.Should().BeOfType<ActionResult<IEnumerable<BookItem>>>();
-            var books = (IEnumerable<BookItem>)((ObjectResult)returnValue.Subject.Result).Value;
-            books.FirstOrDefault().id.Should().Be("GSLCDwAAQBAJ");
+            var returnValue = result.Should().BeOfType<ActionResult<IEnumerable<Book>>>();
+            var books = (IEnumerable<Book>)((ObjectResult)returnValue.Subject.Result).Value;
+            books.FirstOrDefault().Id.Should().Be("GSLCDwAAQBAJ");
         }
     }
 }
