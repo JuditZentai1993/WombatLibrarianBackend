@@ -22,7 +22,7 @@ namespace WombatLibrarianApi.Controllers
         public async Task<IActionResult> GetBookshelfItems()
         {
             var books = await _repository.GetBooksFromBookshelfAsync();
-            return Ok(books.FirstOrDefault());
+            return Ok(books);
         }
 
         // GET: api/Bookshelves/5
