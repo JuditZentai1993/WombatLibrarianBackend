@@ -142,7 +142,7 @@ namespace WombatLibrarianApi.Services.Tests
         {
             var service = new GoogleBooksAPIService(_settings, _clientFactory.Object);
 
-            var result = await service.SerializeResultsFromGoogleBooksApiAsync("http://test.com");
+            var result = await service.GetSearchResultsAsync("http://test.com");
             result.Count().Should().BePositive();
         }
 
