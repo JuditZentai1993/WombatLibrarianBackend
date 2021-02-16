@@ -15,38 +15,11 @@ namespace WombatLibrarianApi.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<object>> GetBooksFromBookshelfAsync()
+        public async Task<IEnumerable<Book>> GetBooksFromBookshelfAsync()
         {
-            return await _context.Bookshelves.Include(bookshelf => bookshelf.Books)
-                .Select( bookshelf => bookshelf.Books)
-                .Select(book => book
-                .Select(
-                    book => new
-                    {
-                        Id = book.Id,
-                        BookshelfId = book.Bookshelves.FirstOrDefault().Id,
-                        VolumeInfo = new
-                        {
-                            Title = book.Title,
-                            Subtitle = book.Subtitle,
-                            ImageLinks = new
-                            {
-                                Thumbnail = book.Thumbnail
-                            },
-                            Description = book.Description,
-                            PageCount = book.PageCount,
-                            AverageRating = book.Rating,
-                            RatingsCount = book.RatingCount,
-                            Language = book.Language,
-                            MaturityRating = book.MaturityRating,
-                            PublishedDate = book.Published,
-                            Publisher = book.Publisher,
-                            Authors = book.Authors,
-                            Categories = book.Categories
-                        }
-                    })
-                )
-                .ToListAsync();
+            var bookshelf = await _context.Bookshelves.Include(bookshelf => bookshelf.Books).ToListAsync();
+
+            return bookshelf.FirstOrDefault().Books;
         }
 
         public async Task<Bookshelf> GetBookshelfItemByIdAsync(int id)
@@ -66,7 +39,6 @@ namespace WombatLibrarianApi.Services
                 bookItem = book;
             }
 
-            //var bookshelf = new Bookshelf();
             if (!_context.Bookshelves.Any())
             {
                 var bookshelf = new Bookshelf() { Books = new List<Book>() };
@@ -80,8 +52,6 @@ namespace WombatLibrarianApi.Services
                     .Books.Add(bookItem);
             }
 
-            //var bookshelf = new Bookshelf() { BookId = book.Id, book = book };
-            //_context.Bookshelves.Add(bookshelf);
             await _context.SaveChangesAsync();
             return _context.Bookshelves.FirstOrDefault();
         }
@@ -95,38 +65,11 @@ namespace WombatLibrarianApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<object>> GetBooksFromWishlistAsync()
+        public async Task<IEnumerable<Book>> GetBooksFromWishlistAsync()
         {
-            return await _context.Wishlists.Include(wishlist => wishlist.Books)
-                .Select(wishlist => wishlist.Books)
-                .Select(book => book
-                .Select(
-                    book => new
-                    {
-                        Id = book.Id,
-                        WishlistId = book.Wishlists.FirstOrDefault().Id,
-                        VolumeInfo = new
-                        {
-                            Title = book.Title,
-                            Subtitle = book.Subtitle,
-                            ImageLinks = new
-                            {
-                                Thumbnail = book.Thumbnail
-                            },
-                            Description = book.Description,
-                            PageCount = book.PageCount,
-                            AverageRating = book.Rating,
-                            RatingsCount = book.RatingCount,
-                            Language = book.Language,
-                            MaturityRating = book.MaturityRating,
-                            PublishedDate = book.Published,
-                            Publisher = book.Publisher,
-                            Authors = book.Authors,
-                            Categories = book.Categories
-                        }
-                    })
-                )
-                .ToListAsync();
+            var wishlist = await _context.Wishlists.Include(wishlist => wishlist.Books).ToListAsync();
+
+            return wishlist.FirstOrDefault().Books;
         }
 
         public async Task<Wishlist> GetWishlistItemByIdAsync(int id)
@@ -146,7 +89,7 @@ namespace WombatLibrarianApi.Services
                 await _context.SaveChangesAsync();
                 bookItem = book;
             }
-            //var wishlist = new Wishlist()
+
             if (!_context.Wishlists.Any())
             {
                 var wishlist = new Wishlist() { Books = new List<Book>() };
@@ -159,8 +102,7 @@ namespace WombatLibrarianApi.Services
                 wishlist.FirstOrDefault()
                     .Books.Add(bookItem);
             }
-            //var wishlist = new Wishlist() { BookId = book.Id, book = book };
-            //_context.Wishlists.Add(wishlist);
+
             await _context.SaveChangesAsync();
             return _context.Wishlists.FirstOrDefault();
         }
