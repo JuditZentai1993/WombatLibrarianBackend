@@ -17,7 +17,11 @@ namespace WombatLibrarianApi.Services
 
         public async Task<IEnumerable<Book>> GetBooksFromBookshelfAsync()
         {
-            var bookshelf = await _context.Bookshelves.Include(bookshelf => bookshelf.Books).ToListAsync();
+            var bookshelf = await _context.Bookshelves.Include(bookshelf => bookshelf.Books)
+                .ThenInclude(book => book.Authors)
+                .Include(bookshelf => bookshelf.Books)
+                .ThenInclude(book => book.Categories)
+                .ToListAsync();
 
             return bookshelf.FirstOrDefault().Books;
         }
@@ -67,7 +71,11 @@ namespace WombatLibrarianApi.Services
 
         public async Task<IEnumerable<Book>> GetBooksFromWishlistAsync()
         {
-            var wishlist = await _context.Wishlists.Include(wishlist => wishlist.Books).ToListAsync();
+            var wishlist = await _context.Wishlists.Include(wishlist => wishlist.Books)
+                .ThenInclude(book => book.Authors)
+                .Include(wishlist => wishlist.Books)
+                .ThenInclude(book => book.Categories)
+                .ToListAsync();
 
             return wishlist.FirstOrDefault().Books;
         }
